@@ -16,13 +16,13 @@ class ProductCreate(BaseModel):
 
 class Update_ProductCreate(BaseModel):
 
-    name : Optional[str]
+    name : Optional[str]=None
 
-    description : Optional[str]
+    description : Optional[str]=None
 
-    price : Optional[float]
+    price : Optional[float]=None 
 
-    stock : Optional[int]
+    stock : Optional[int]=None 
 
-    category : Optional[str]
+    category : Optional[str]=None
 
