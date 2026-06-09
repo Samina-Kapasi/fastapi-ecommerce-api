@@ -81,7 +81,7 @@ def update_product( product_id : int, product:Update_ProductCreate, db:session=D
     update_prod= product.model_dump(exclude_unset=True)
 
     print(update_prod)
-    
+
     for key, value in update_prod.items():
         setattr(prod,key,value)
 
@@ -100,3 +100,37 @@ def search(product_name:str, db:session=Depends(get_db)):
     
     return name
 
+@app.get("/filter")
+def filter_product(product_name:str = None ,product_category:str = None , min_price: float= None, max_price: float = None,sort: str = None, page : int = 1, limit : int = 10, db:session=Depends(get_db)):
+
+    query=db.query(Product)
+
+    if product_name:
+        query = query.filter(Product.name.ilike(f"%{product_name}%"))
+
+    if product_category:
+        query = query.filter(Product.category.ilike(f"%{product_category}%"))
+
+    if min_price is not None:
+        query = query.filter(Product.price >= min_price)
+
+    if max_price is not None:
+        query = query.filter(Product.price <= max_price)
+
+    #sorting
+    if sort=="price_low":
+        query=query.order_by(Product.price.asc())
+    elif sort=="price-high":
+        query=query.order_by(Product.price.desc())
+
+    #pagination
+    offset=(page - 1) * limit
+    query= query.offset(offset).limit(limit)
+
+    products= query.all() 
+
+
+    if not products:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    return products
