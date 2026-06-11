@@ -167,3 +167,28 @@ def add_to_cart(cart: CreateCart, db:session=Depends(get_db)):
             "cart_id": cart_items.id
         }
     )
+
+@app.get("/cart/get")
+def get_cart(db:session=Depends(get_db)):
+
+    cart_items=db.query(Cart).all()
+
+    if not cart_items:
+        raise HTTPException(status_code=404, detail="Cart is empty")
+    
+    response= []
+
+    for items in cart_items:
+
+        product= db.query(Product).filter(
+            Product.id==items.product_id
+        ).first()
+
+        response.append({
+            "cart_id":items.id,
+            "product_name":product.name,
+            "price":product.price,
+            "Quantity":items.quantity
+        })
+    return response
+    

@@ -26,3 +26,8 @@ class Update_ProductCreate(BaseModel):
 
     category : Optional[str]=None
 
+class CreateCart(BaseModel):
+
+    product_id: int 
+
+    quantity: int
