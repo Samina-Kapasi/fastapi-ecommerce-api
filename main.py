@@ -191,4 +191,18 @@ def get_cart(db:session=Depends(get_db)):
             "Quantity":items.quantity
         })
     return response
+
+@app.delete("/cart/{cart_id}")
+def delete_cart(cart_id:int, db:session=Depends(get_db)):
+
+    del_cart=db.query(Cart).filter(
+        Cart.id==cart_id
+    ).first()
+
+    if not del_cart:
+        raise HTTPException(status_code=404, detail="Cart not found")
     
+    db.delete(del_cart)
+    db.commit()
+
+    return JSONResponse(status_code=204, content="Cart deleted successfully")

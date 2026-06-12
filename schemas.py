@@ -31,3 +31,7 @@ class CreateCart(BaseModel):
     product_id: int 
 
     quantity: int
+
+class Update_Cart(BaseModel):
+
+    quantity : Optional[int] = None
