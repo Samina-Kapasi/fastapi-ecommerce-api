@@ -49,3 +49,27 @@ class Cart(Base):
         "Product",
         back_populates="cart_items"
     )
+
+class User(Base):
+
+    __tablename__= "users"
+
+    id= Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    name=Column(
+        String(200),
+        unique=True
+    )
+
+    email=Column(
+        String(200),
+        unique=True
+    )
+
+    password=Column(
+        String(255)
+    )

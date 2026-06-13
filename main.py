@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Depends, HTTPException
 from database import Base, engine, SessionLocal
-from models import Product, Cart
-from schemas import ProductCreate, Update_ProductCreate, CreateCart
+from models import Product, Cart, User
+from schemas import ProductCreate, Update_ProductCreate, CreateCart, Update_Cart, CreateUser
 from sqlalchemy.orm import session
 from fastapi.responses import JSONResponse
-import json
+from security import hash_password
 
 app=FastAPI()
 
@@ -23,6 +23,9 @@ def home():
     return {
         "message":"FastAPI connected with MYSQL"
     }
+
+
+# Product Management
 
 @app.post("/product")
 def create_product(product:ProductCreate, db:session=Depends(get_db)):
@@ -80,8 +83,6 @@ def update_product( product_id : int, product:Update_ProductCreate, db:session=D
     
     update_prod= product.model_dump(exclude_unset=True)
 
-    print(update_prod)
-
     for key, value in update_prod.items():
         setattr(prod,key,value)
 
@@ -135,6 +136,8 @@ def filter_product(product_name:str = None ,product_category:str = None , min_pr
     
     return products
 
+# Cart Management
+
 @app.post("/cart/add")
 def add_to_cart(cart: CreateCart, db:session=Depends(get_db)):
 
@@ -148,25 +151,40 @@ def add_to_cart(cart: CreateCart, db:session=Depends(get_db)):
     if cart.quantity <= 0:
         raise HTTPException(status_code=400, detail="Quantity must be greater than 0")
     
-    if cart.quantity >= product.stock:
+    if cart.quantity > product.stock:
         raise HTTPException(status_code=400, detail="Insufficient stock")
-    
-    cart_items= Cart(
-        product_id=cart.product_id,
-        quantity=cart.quantity
-    )
 
-    db.add(cart_items)
-    db.commit()
-    db.refresh(cart_items)
+    existing_cart=db.query(Cart).filter(
+        Cart.product_id==cart.product_id
+    ).first()
 
-    return JSONResponse(
-        status_code=201,
-        content={
-            "message":"Product added to cart",
-            "cart_id": cart_items.id
-        }
-    )
+    if existing_cart:
+        existing_cart.quantity += cart.quantity
+
+        if existing_cart.quantity > product.stock:
+            raise HTTPException(status_code=400, detail="Insufficient stock")
+        
+        db.commit()
+        db.refresh(existing_cart)
+
+        return JSONResponse(status_code=200, content="Cart successfully updated")
+    if not existing_cart:
+        cart_items= Cart(
+            product_id=cart.product_id,
+            quantity=cart.quantity
+        )
+
+        db.add(cart_items)
+        db.commit()
+        db.refresh(cart_items)
+
+        return JSONResponse(
+            status_code=201,
+            content={
+                "message":"Product added to cart",
+                "cart_id": cart_items.id
+            }
+        )
 
 @app.get("/cart/get")
 def get_cart(db:session=Depends(get_db)):
@@ -206,3 +224,56 @@ def delete_cart(cart_id:int, db:session=Depends(get_db)):
     db.commit()
 
     return JSONResponse(status_code=204, content="Cart deleted successfully")
+
+@app.put("/cart/{cart_id}")
+def update_cart(cart_id:int,cart:Update_Cart, db:session=Depends(get_db)):
+
+    cart_items=db.query(Cart).filter(
+        Cart.id==cart_id
+    ).first()
+
+    if not cart_items:
+        raise HTTPException(status_code=404, detail="Cart not found")
+    
+    update_cart_items=cart.model_dump(exclude_unset=True)
+
+    if "quantity" in update_cart_items:
+
+        product=db.query(Product).filter(
+            Product.id==cart_items.product_id
+        ).first()
+
+        if update_cart_items["quantity"]<=0:
+            raise HTTPException(status_code=400, detail="Quantity must be greater than zero")
+        
+        if update_cart_items["quantity"] >= product.stock:
+            raise HTTPException(status_code=400, detail="Insufficient stock")
+        
+    for key, value in update_cart_items.items():
+        setattr(cart_items, key, value)
+
+    db.commit()
+    db.refresh(cart_items)
+
+    return JSONResponse(status_code=200, content="Cart updated successfully")
+
+@app.post("/register")
+def register(user:CreateUser, db:session=Depends(get_db)):
+
+    existing_user=db.query(User).filter(
+        User.email==user.email
+    ).first()
+
+    if existing_user:
+        raise HTTPException(status_code=400, detail="User already registered")
+    
+    new_user=User(
+        name = user.name,
+        email = user.email,
+        password = hash_password(user.password)
+    )
+
+    db.add(new_user)
+    db.commit()
+
+    return JSONResponse(status_code=201, content="User Registered successfully")
