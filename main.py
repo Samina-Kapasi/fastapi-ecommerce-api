@@ -1,10 +1,11 @@
 from fastapi import FastAPI, Depends, HTTPException
 from database import Base, engine, SessionLocal
 from models import Product, Cart, User
-from schemas import ProductCreate, Update_ProductCreate, CreateCart, Update_Cart, CreateUser
+from schemas import ProductCreate, Update_ProductCreate, CreateCart, Update_Cart, CreateUser, UserLogin
 from sqlalchemy.orm import session
 from fastapi.responses import JSONResponse
-from security import hash_password
+from security import hash_password, verify_password
+from auth import create_access_token
 
 app=FastAPI()
 
@@ -277,3 +278,32 @@ def register(user:CreateUser, db:session=Depends(get_db)):
     db.commit()
 
     return JSONResponse(status_code=201, content="User Registered successfully")
+
+
+@app.post("/login")
+def login(user:UserLogin, db:session=Depends(get_db)):
+
+    db_user=db.query(User).filter(
+        User.email==user.email
+    ).first()
+
+    if not db_user:
+        raise HTTPException(status_code=401, detail="Invalid Credentials")
+    
+    verify_token=verify_password(
+        user.password, db_user.password
+    )
+
+    if not verify_token:
+        raise HTTPException(status_code=401, detail="Invalid Credentials")
+    
+    access_token =create_access_token(
+        data={
+            "sub":str(db_user.id)
+        }
+    )
+
+    return {
+        "access_token":access_token,
+        "token_type":"bearer"
+    }
