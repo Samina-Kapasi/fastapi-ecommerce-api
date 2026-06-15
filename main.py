@@ -5,7 +5,8 @@ from schemas import ProductCreate, Update_ProductCreate, CreateCart, Update_Cart
 from sqlalchemy.orm import session
 from fastapi.responses import JSONResponse
 from security import hash_password, verify_password
-from auth import create_access_token
+from auth import create_access_token, get_current_user
+from fastapi.security import OAuth2PasswordRequestForm
 
 app=FastAPI()
 
@@ -281,17 +282,17 @@ def register(user:CreateUser, db:session=Depends(get_db)):
 
 
 @app.post("/login")
-def login(user:UserLogin, db:session=Depends(get_db)):
+def login(form_user:OAuth2PasswordRequestForm=Depends(), db:session=Depends(get_db)):
 
     db_user=db.query(User).filter(
-        User.email==user.email
+        User.email==form_user.username
     ).first()
 
     if not db_user:
         raise HTTPException(status_code=401, detail="Invalid Credentials")
     
     verify_token=verify_password(
-        user.password, db_user.password
+        form_user.password, db_user.password
     )
 
     if not verify_token:
@@ -306,4 +307,13 @@ def login(user:UserLogin, db:session=Depends(get_db)):
     return {
         "access_token":access_token,
         "token_type":"bearer"
+    }
+
+@app.get("/Logged-in_user")
+def login_users(current_user:User=Depends(get_current_user)):
+
+    return {
+        "id":current_user.id,
+        "user":current_user.name,
+        "email":current_user.email,
     }
