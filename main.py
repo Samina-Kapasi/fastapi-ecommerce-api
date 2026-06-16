@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException
-from database import Base, engine, SessionLocal
+from database import Base, engine, get_db
 from models import Product, Cart, User
 from schemas import ProductCreate, Update_ProductCreate, CreateCart, Update_Cart, CreateUser, UserLogin
 from sqlalchemy.orm import session
@@ -12,13 +12,6 @@ app=FastAPI()
 
 Base.metadata.create_all(bind=engine)
 
-def get_db():
-    db=SessionLocal()
-
-    try:
-        yield db
-    finally:
-        db.close()
 
 @app.get("/")
 def home():
@@ -141,7 +134,7 @@ def filter_product(product_name:str = None ,product_category:str = None , min_pr
 # Cart Management
 
 @app.post("/cart/add")
-def add_to_cart(cart: CreateCart, db:session=Depends(get_db)):
+def add_to_cart(cart: CreateCart, current_user:User=Depends(get_current_user), db:session=Depends(get_db)):
 
     product=db.query(Product).filter(
         Product.id==cart.product_id
@@ -157,8 +150,11 @@ def add_to_cart(cart: CreateCart, db:session=Depends(get_db)):
         raise HTTPException(status_code=400, detail="Insufficient stock")
 
     existing_cart=db.query(Cart).filter(
+        Cart.user_id==current_user.id,
         Cart.product_id==cart.product_id
     ).first()
+
+    print("MAIN DB session", id)
 
     if existing_cart:
         existing_cart.quantity += cart.quantity
@@ -172,6 +168,7 @@ def add_to_cart(cart: CreateCart, db:session=Depends(get_db)):
         return JSONResponse(status_code=200, content="Cart successfully updated")
     if not existing_cart:
         cart_items= Cart(
+            user_id=current_user.id,
             product_id=cart.product_id,
             quantity=cart.quantity
         )
@@ -179,6 +176,7 @@ def add_to_cart(cart: CreateCart, db:session=Depends(get_db)):
         db.add(cart_items)
         db.commit()
         db.refresh(cart_items)
+
 
         return JSONResponse(
             status_code=201,

@@ -38,6 +38,11 @@ class Cart(Base):
         index=True
     )
 
+    user_id=Column(
+        Integer,
+        ForeignKey("users.id")
+    )
+
     product_id=Column(
         Integer,
         ForeignKey("products.id")
@@ -47,6 +52,11 @@ class Cart(Base):
 
     product=relationship(
         "Product",
+        back_populates="cart_items"
+    )
+
+    user=relationship(
+        "User",
         back_populates="cart_items"
     )
 
@@ -72,4 +82,9 @@ class User(Base):
 
     password=Column(
         String(255)
+    )
+
+    cart_items=relationship(
+        "Cart",
+        back_populates="user"
     )

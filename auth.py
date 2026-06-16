@@ -7,13 +7,8 @@ from fastapi.security import OAuth2PasswordBearer
 from database import SessionLocal
 from models import User
 from sqlalchemy.orm import session
+from database import get_db
 
-def get_db():
-    db=SessionLocal()
-    try :
-        yield db
-    finally : 
-        db.close()
 
 load_dotenv()
 SECRET_KEY= os.getenv("SECRET_KEY")
@@ -68,6 +63,8 @@ def get_current_user(token:str = Depends(Oauth2_scheme), db:session=Depends(get_
     user=db.query(User).filter(
         User.id==int(user_id)
     ).first()
+
+    print("AUTH DB session", id(db))
 
     if not user:
         raise Credential_exception
