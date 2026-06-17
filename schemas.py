@@ -47,3 +47,6 @@ class UserLogin(BaseModel):
 
     email: EmailStr
     password : str
+
+class Create_Order(BaseModel):
+    pass

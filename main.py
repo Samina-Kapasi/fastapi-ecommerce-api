@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from database import Base, engine, get_db
-from models import Product, Cart, User
-from schemas import ProductCreate, Update_ProductCreate, CreateCart, Update_Cart, CreateUser, UserLogin
+from models import Product, Cart, User, Order
+from schemas import ProductCreate, Update_ProductCreate, CreateCart, Update_Cart, CreateUser, UserLogin, Create_Order
 from sqlalchemy.orm import session
 from fastapi.responses import JSONResponse
 from security import hash_password, verify_password
@@ -154,8 +154,6 @@ def add_to_cart(cart: CreateCart, current_user:User=Depends(get_current_user), d
         Cart.product_id==cart.product_id
     ).first()
 
-    print("MAIN DB session", id)
-
     if existing_cart:
         existing_cart.quantity += cart.quantity
 
@@ -187,9 +185,11 @@ def add_to_cart(cart: CreateCart, current_user:User=Depends(get_current_user), d
         )
 
 @app.get("/cart/get")
-def get_cart(db:session=Depends(get_db)):
+def get_cart(current_user=Depends(get_current_user),db:session=Depends(get_db)):
 
-    cart_items=db.query(Cart).all()
+    cart_items=db.query(Cart).filter(
+        Cart.user_id==current_user.id
+    ).all()
 
     if not cart_items:
         raise HTTPException(status_code=404, detail="Cart is empty")
@@ -204,6 +204,7 @@ def get_cart(db:session=Depends(get_db)):
 
         response.append({
             "cart_id":items.id,
+            "User_name":current_user.name,
             "product_name":product.name,
             "price":product.price,
             "Quantity":items.quantity
@@ -314,4 +315,46 @@ def login_users(current_user:User=Depends(get_current_user)):
         "id":current_user.id,
         "user":current_user.name,
         "email":current_user.email,
+    }
+
+
+@app.post("/order")
+def place_order(current_user:User=Depends(get_current_user),db:session=Depends(get_db)):
+
+    cart_items=db.query(Cart).filter(
+        Cart.id==current_user.id
+    ).all()
+
+    if not cart_items:
+        raise HTTPException(status_code=404, detail="Cart is empty" )
+    
+    total_price=0
+
+    for items in cart_items:
+
+        product=db.query(Product).filter(
+            Product.id==items.product_id
+        ).first()
+
+        total_price += total_price * items.quantity
+
+    new_order = Order(
+        user_id= current_user.id,
+        total_price= total_price,
+        status= "Pending"
+    )
+
+    db.add(new_order)
+
+    db.commit()
+
+    for item in cart_items:
+        db.delete(item)
+
+    db.refresh(new_order)
+
+    return {
+        "message":"Order placed successfully",
+        "user_id":new_order.id,
+        "price": new_order.total_price
     }
