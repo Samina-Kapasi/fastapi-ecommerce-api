@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from database import Base, engine, get_db
-from models import Product, Cart, User, Order
+from models import Product, Cart, User, Order, Order_items
 from schemas import ProductCreate, Update_ProductCreate, CreateCart, Update_Cart, CreateUser, UserLogin, Create_Order
 from sqlalchemy.orm import session
 from fastapi.responses import JSONResponse
@@ -318,11 +318,11 @@ def login_users(current_user:User=Depends(get_current_user)):
     }
 
 
-@app.post("/order")
+@app.post("/order/add")
 def place_order(current_user:User=Depends(get_current_user),db:session=Depends(get_db)):
 
     cart_items=db.query(Cart).filter(
-        Cart.id==current_user.id
+        Cart.user_id==current_user.id
     ).all()
 
     if not cart_items:
@@ -336,7 +336,15 @@ def place_order(current_user:User=Depends(get_current_user),db:session=Depends(g
             Product.id==items.product_id
         ).first()
 
-        total_price += total_price * items.quantity
+        if not product:
+            raise HTTPException(status_code=404, detail="Product not found")
+        
+        if items.quantity > product.stock:
+            raise HTTPException(status_code=400, detail="Insufficient Stock")
+
+        total_price += product.price * items.quantity
+
+        product.stock -= items.quantity
 
     new_order = Order(
         user_id= current_user.id,
@@ -348,13 +356,51 @@ def place_order(current_user:User=Depends(get_current_user),db:session=Depends(g
 
     db.commit()
 
+    db.refresh(new_order)
+
+    for item in cart_items:
+
+        order_items=Order_items(
+            order_id=new_order.id,
+            product_id=product.id,
+            quantity=item.quantity,
+            price=product.price
+        )
+
+        db.add(order_items)
+    
     for item in cart_items:
         db.delete(item)
 
-    db.refresh(new_order)
+    db.commit()
 
     return {
         "message":"Order placed successfully",
-        "user_id":new_order.id,
-        "price": new_order.total_price
+        "order_id":new_order.id,
+        "price": new_order.total_price,
+        "date": new_order.created_at
     }
+
+@app.get("/order/get")
+def get_order(current_user=Depends(get_current_user), db:session=Depends(get_db)):
+
+    orders=db.query(Order).filter(
+        Order.user_id==current_user.id
+    ).all()
+
+    if not orders:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    response=[]
+
+    for items in orders:
+
+        response.append({
+            "order_id":items.id,
+            "user_name":items.user.name,
+            "total_price":items.total_price,
+            "status":items.status
+        })
+
+    return response
+

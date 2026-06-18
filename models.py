@@ -1,6 +1,7 @@
-from sqlalchemy import Float, String, Integer, Column, ForeignKey
+from sqlalchemy import Float, String, Integer, Column, ForeignKey, DateTime
 from database import Base
 from sqlalchemy.orm import relationship
+from datetime import datetime
 
 class Product(Base):
 
@@ -24,6 +25,11 @@ class Product(Base):
 
     cart_items=relationship(
         "Cart",
+        back_populates="product"
+    )
+
+    order_item=relationship(
+        "Order_items",
         back_populates="product"
     )
 
@@ -89,14 +95,14 @@ class User(Base):
         back_populates="user"
     )
 
-    order=relationship(
+    orders=relationship(
         "Order",
         back_populates="user"
     )
 
 class Order(Base):
 
-    __tablename__="order"
+    __tablename__="orders"
 
     id= Column(Integer,
                primary_key=True, 
@@ -111,8 +117,57 @@ class Order(Base):
 
     status=Column(String(200),
                   default="Pending")
+    
+    created_at=Column(
+        DateTime,
+        default=datetime.utcnow
+    )
 
     user=relationship(
         "User",
         back_populates="order"
+    )
+
+    order_detail=relationship(
+        "Order_items",
+        back_populates="order"
+    )
+
+class Order_items(Base):
+
+    __tablename__="order_items"
+
+    id=Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    order_id=Column(
+        Integer,
+        ForeignKey("orders.id")
+    )
+
+    product_id=Column(
+        Integer,
+        ForeignKey("products.id")
+    )
+
+    user_name=Column(
+        String(200),
+        ForeignKey("users.name")
+    )
+
+    quantity=Column(Integer)
+
+    price=Column(Float)
+
+    order=relationship(
+        "Order",
+        back_populates="order_detail"
+    )
+
+    order_item=relationship(
+        "Product",
+        back_populates="order_detail"
     )
