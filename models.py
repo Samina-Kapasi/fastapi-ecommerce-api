@@ -28,9 +28,9 @@ class Product(Base):
         back_populates="product"
     )
 
-    order_item=relationship(
+    order_detail=relationship(
         "Order_items",
-        back_populates="product"
+        back_populates="order_items"
     )
 
 
@@ -125,7 +125,7 @@ class Order(Base):
 
     user=relationship(
         "User",
-        back_populates="order"
+        back_populates="orders"
     )
 
     order_detail=relationship(
@@ -167,7 +167,7 @@ class Order_items(Base):
         back_populates="order_detail"
     )
 
-    order_item=relationship(
+    order_items=relationship(
         "Product",
         back_populates="order_detail"
     )
