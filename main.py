@@ -404,3 +404,39 @@ def get_order(current_user=Depends(get_current_user), db:session=Depends(get_db)
 
     return response
 
+@app.get("/orders/{order_id}")
+def get_order_id(order_id:int , current_user=Depends(get_current_user), db:session=Depends(get_db)):
+    
+    order_product=db.query(Order).filter(
+        Order.id==order_id,
+        Order.user_id==current_user.id
+    ).first()
+
+    if not order_product:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    order_items=db.query(Order_items).filter(
+        Order_items.order_id==Order.id
+    ).all()
+
+    responses=[]
+
+    for items in order_items:
+
+        product=db.query(Product).filter(
+            Product.id==items.product_id
+        ).first()
+
+        responses.append({
+            "product_name": product.name,
+            "quantity": items.quantity,
+            "price":items.price
+        })
+
+    return {
+        "order_id":order_product.id,
+        "status":order_product.status,
+        "total_price":order_product.price,
+        "product":responses,
+        "created at":order_product.created_at
+    }
