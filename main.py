@@ -440,3 +440,43 @@ def get_order_id(order_id:int , current_user=Depends(get_current_user), db:sessi
         "product":responses,
         "created at":order_product.created_at
     }
+
+@app.put("/order/{order_id}/cancel")
+def cancel_order(order_id: int, current_user:User=Depends(get_current_user), db:session=Depends(get_db)):
+
+    order=db.query(Order).filter(
+        Order.id==order_id,
+        Order.user_id==current_user.id
+    ).first()
+
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    if order.status=="Cancelled":
+        raise HTTPException(status_code=400, detail="Order already cancelled")
+    
+    order_items=db.query(Order_items).filter(
+        Order_items.order_id==order.id
+    ).all()
+
+    for items in order_items:
+
+        product=db.query(Product).filter(
+            Product.id==items.product_id
+        ).first()
+
+        if product:
+            product.stock += items.quantity
+
+    order.status="Cancelled"
+
+    db.commit()
+    db.refresh(order)
+
+    return JSONResponse(status_code=200, 
+                        content={
+        "message":"Order cancelled successfully",
+        "order_id":order.id,
+        "status":order.status
+    })
+    
