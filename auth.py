@@ -64,8 +64,6 @@ def get_current_user(token:str = Depends(Oauth2_scheme), db:session=Depends(get_
         User.id==int(user_id)
     ).first()
 
-    print("AUTH DB session", id(db))
-
     if not user:
         raise Credential_exception
     
