@@ -1,39 +1,198 @@
-import { Link } from "react-router-dom";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box,
+  Badge,
+  IconButton,
+  TextField,
+  InputAdornment,
+  Menu,
+  MenuItem,
+} from "@mui/material";
+
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import SearchIcon from "@mui/icons-material/Search";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
-    return (
-        <nav
-            style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "15px 40px",
-                background: "#1976d2",
-                color: "white"
-            }}
+  const navigate = useNavigate();
+
+  const { isLoggedIn, logout } = useAuth();
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    logout();
+    handleClose();
+    navigate("/login");
+  };
+
+  return (
+    <AppBar
+      position="sticky"
+      elevation={2}
+      sx={{
+        background: "#fff",
+        color: "#000",
+      }}
+    >
+      <Toolbar sx={{ justifyContent: "space-between" }}>
+        {/* Logo */}
+
+        <Typography
+          variant="h5"
+          fontWeight="bold"
+          color="primary"
+          component={Link}
+          to="/"
+          sx={{
+            textDecoration: "none",
+          }}
         >
-            <h2>E-Commerce</h2>
+          ShopEase
+        </Typography>
 
-            <div
-                style={{
-                    display: "flex",
-                    gap: "20px"
-                }}
-            >
-                <Link to="/" style={{ color: "white" }}>Home</Link>
+        {/* Navigation */}
 
-                <Link to="/products" style={{ color: "white" }}>Products</Link>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 3,
+          }}
+        >
+          <Button component={Link} to="/" color="inherit">
+            Home
+          </Button>
 
-                <Link to="/cart" style={{ color: "white" }}>Cart</Link>
+          <Button component={Link} to="/products" color="inherit">
+            Products
+          </Button>
 
-                <Link to="/orders" style={{ color: "white" }}>Orders</Link>
+          {isLoggedIn && (
+            <>
+              <Button component={Link} to="/orders" color="inherit">
+                Orders
+              </Button>
 
-                <Link to="/profile" style={{ color: "white" }}>Profile</Link>
+              <Button component={Link} to="/profile" color="inherit">
+                Profile
+              </Button>
+            </>
+          )}
+        </Box>
 
-                <Link to="/login" style={{ color: "white" }}>Login</Link>
-            </div>
+        {/* Search */}
 
-        </nav>
-    );
+        <TextField
+          size="small"
+          placeholder="Search Products..."
+          sx={{
+            width: 300,
+            bgcolor: "#f5f5f5",
+            borderRadius: 2,
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        {/* Right Side */}
+
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+          }}
+        >
+          <IconButton
+            component={Link}
+            to="/cart"
+            color="inherit"
+          >
+            <Badge badgeContent={0} color="error">
+              <ShoppingCartIcon />
+            </Badge>
+          </IconButton>
+
+          {!isLoggedIn ? (
+            <>
+              <Button
+                component={Link}
+                to="/login"
+                variant="outlined"
+              >
+                Login
+              </Button>
+
+              <Button
+                component={Link}
+                to="/register"
+                variant="contained"
+              >
+                Register
+              </Button>
+            </>
+          ) : (
+            <>
+              <IconButton
+                color="inherit"
+                onClick={handleMenuOpen}
+              >
+                <AccountCircleIcon fontSize="large" />
+              </IconButton>
+
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem
+                  component={Link}
+                  to="/profile"
+                  onClick={handleClose}
+                >
+                  Profile
+                </MenuItem>
+
+                <MenuItem
+                  component={Link}
+                  to="/orders"
+                  onClick={handleClose}
+                >
+                  Orders
+                </MenuItem>
+
+                <MenuItem
+                  onClick={handleLogout}
+                >
+                  Logout
+                </MenuItem>
+              </Menu>
+            </>
+          )}
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
 }
 
 export default Navbar;

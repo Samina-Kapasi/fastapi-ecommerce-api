@@ -13,6 +13,8 @@ class ProductCreate(BaseModel):
 
     category:str
 
+    image : str 
+
 
 class Update_ProductCreate(BaseModel):
 

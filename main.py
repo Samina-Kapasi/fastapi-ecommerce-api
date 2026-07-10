@@ -7,8 +7,19 @@ from fastapi.responses import JSONResponse
 from security import hash_password, verify_password
 from auth import create_access_token, get_current_user
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 
 app=FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 Base.metadata.create_all(bind=engine)
 
@@ -30,7 +41,8 @@ def create_product(product:ProductCreate, db:session=Depends(get_db)):
         description = product.description,
         price = product.price ,
         stock = product.stock,
-        category = product.category
+        category = product.category,
+        image = product.image
     )
 
     db.add(new_product)
@@ -277,8 +289,9 @@ def register(user:CreateUser, db:session=Depends(get_db)):
     db.add(new_user)
     db.commit()
 
-    return JSONResponse(status_code=201, content="User Registered successfully")
-
+    return JSONResponse(status_code=201, content={
+        "message":"User Registered successfully"
+    })
 
 @app.post("/login")
 def login(form_user:OAuth2PasswordRequestForm=Depends(), db:session=Depends(get_db)):

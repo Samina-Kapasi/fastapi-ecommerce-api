@@ -1,38 +1,127 @@
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
   Chip,
+  CircularProgress,
   Divider,
   Grid,
   Paper,
   Rating,
   Typography,
+  Alert,
 } from "@mui/material";
 
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
-import laptop from "../assets/products/laptop.jfif";
+import { useParams } from "react-router-dom";
+
+import api from "../services/api";
 
 function ProductDetails() {
+
+  const { id } = useParams();
+
+  const [product, setProduct] = useState(null);
+
+  const [loading, setLoading] = useState(true);
+
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+
+    fetchProduct();
+
+  }, []);
+
+  async function fetchProduct() {
+
+    try {
+
+      setLoading(true);
+
+      const response = await api.get(`/products/${id}`);
+
+      setProduct(response.data);
+
+    }
+
+    catch (err) {
+
+      setError("Product not found");
+
+    }
+
+    finally {
+
+      setLoading(false);
+
+    }
+
+  }
+
+  if (loading) {
+
+    return (
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mt: 10,
+        }}
+      >
+
+        <CircularProgress />
+
+      </Box>
+
+    );
+
+  }
+
+  if (error) {
+
+    return (
+
+      <Alert severity="error">
+
+        {error}
+
+      </Alert>
+
+    );
+
+  }
+
   return (
-    <Box sx={{ p: 5, background: "#f5f5f5", minHeight: "100vh" }}>
+
+    <Box
+      sx={{
+        p: 5,
+        background: "#f5f5f5",
+        minHeight: "100vh",
+      }}
+    >
 
       <Paper
-        elevation={4}
+        elevation={5}
         sx={{
           p: 4,
           borderRadius: 4,
         }}
       >
-        <Grid container spacing={5}>
 
-          {/* Product Image */}
+        <Grid container spacing={5}>
 
           <Grid item xs={12} md={6}>
 
             <img
-              src={laptop}
-              alt="Laptop"
+              src={
+                product.image ||
+                "https://via.placeholder.com/500x350?text=No+Image"
+              }
+              alt={product.name}
               style={{
                 width: "100%",
                 borderRadius: "20px",
@@ -41,13 +130,19 @@ function ProductDetails() {
 
           </Grid>
 
-          {/* Product Information */}
-
           <Grid item xs={12} md={6}>
 
             <Chip
-              label="In Stock"
-              color="success"
+              label={
+                product.stock > 0
+                  ? "In Stock"
+                  : "Out Of Stock"
+              }
+              color={
+                product.stock > 0
+                  ? "success"
+                  : "error"
+              }
               sx={{ mb: 2 }}
             />
 
@@ -55,7 +150,9 @@ function ProductDetails() {
               variant="h3"
               fontWeight="bold"
             >
-              Gaming Laptop
+
+              {product.name}
+
             </Typography>
 
             <Rating
@@ -70,51 +167,61 @@ function ProductDetails() {
               color="primary"
               mt={3}
             >
-              ₹55,999
+
+              ₹ {product.price}
+
             </Typography>
 
             <Divider sx={{ my: 3 }} />
 
             <Typography
-              variant="body1"
               color="text.secondary"
             >
-              Experience high-performance gaming with the latest processor,
-              RTX graphics, 16GB RAM, and a 144Hz display. Designed for
-              gamers and professionals who demand speed and reliability.
+
+              {product.description}
+
             </Typography>
 
             <Typography
               mt={3}
               fontWeight="bold"
             >
-              Category : Electronics
+
+              Category : {product.category}
+
             </Typography>
 
             <Typography mt={1}>
-              Available Stock : 12
+
+              Available Stock : {product.stock}
+
             </Typography>
 
             <Button
               variant="contained"
-              size="large"
               startIcon={<ShoppingCartIcon />}
+              size="large"
               sx={{
                 mt: 4,
                 borderRadius: 3,
                 px: 5,
               }}
             >
+
               Add To Cart
+
             </Button>
 
           </Grid>
 
         </Grid>
+
       </Paper>
 
     </Box>
+
   );
+
 }
 
 export default ProductDetails;

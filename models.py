@@ -23,6 +23,8 @@ class Product(Base):
 
     category=Column(String(250))
 
+    image = Column(String, nullable=True)
+
     cart_items=relationship(
         "Cart",
         back_populates="product"
