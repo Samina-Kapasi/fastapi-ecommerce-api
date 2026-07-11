@@ -204,7 +204,7 @@ def get_cart(current_user=Depends(get_current_user),db:session=Depends(get_db)):
     ).all()
 
     if not cart_items:
-        raise HTTPException(status_code=404, detail="Cart is empty")
+        return []
     
     response= []
 
@@ -219,15 +219,17 @@ def get_cart(current_user=Depends(get_current_user),db:session=Depends(get_db)):
             "User_name":current_user.name,
             "product_name":product.name,
             "price":product.price,
-            "Quantity":items.quantity
+            "Quantity":items.quantity,
+            "image": product.image
         })
     return response
 
 @app.delete("/cart/{cart_id}")
-def delete_cart(cart_id:int, db:session=Depends(get_db)):
+def delete_cart(cart_id:int, current_user:User = Depends(get_current_user),db:session=Depends(get_db)):
 
     del_cart=db.query(Cart).filter(
-        Cart.id==cart_id
+        Cart.id==cart_id,
+        Cart.user_id==current_user.id
     ).first()
 
     if not del_cart:
@@ -236,13 +238,16 @@ def delete_cart(cart_id:int, db:session=Depends(get_db)):
     db.delete(del_cart)
     db.commit()
 
-    return JSONResponse(status_code=204, content="Cart deleted successfully")
+    return JSONResponse(status_code=204, content={
+        "message":"Cart deleted successfully"
+        })
 
 @app.put("/cart/{cart_id}")
-def update_cart(cart_id:int,cart:Update_Cart, db:session=Depends(get_db)):
+def update_cart(cart_id:int,cart:Update_Cart,current_user:User=Depends(get_current_user), db:session=Depends(get_db)):
 
     cart_items=db.query(Cart).filter(
-        Cart.id==cart_id
+        Cart.id==cart_id,
+        Cart.user_id==current_user
     ).first()
 
     if not cart_items:
@@ -259,7 +264,7 @@ def update_cart(cart_id:int,cart:Update_Cart, db:session=Depends(get_db)):
         if update_cart_items["quantity"]<=0:
             raise HTTPException(status_code=400, detail="Quantity must be greater than zero")
         
-        if update_cart_items["quantity"] >= product.stock:
+        if update_cart_items["quantity"] > product.stock:
             raise HTTPException(status_code=400, detail="Insufficient stock")
         
     for key, value in update_cart_items.items():
@@ -268,7 +273,9 @@ def update_cart(cart_id:int,cart:Update_Cart, db:session=Depends(get_db)):
     db.commit()
     db.refresh(cart_items)
 
-    return JSONResponse(status_code=200, content="Cart updated successfully")
+    return JSONResponse(status_code=200, content={
+        "message": "Cart updated successfully"
+        })
 
 @app.post("/register")
 def register(user:CreateUser, db:session=Depends(get_db)):
@@ -373,6 +380,10 @@ def place_order(current_user:User=Depends(get_current_user),db:session=Depends(g
 
     for item in cart_items:
 
+        product = db.query(Product).filter(
+        Product.id == item.product_id
+        ).first()
+
         order_items=Order_items(
             order_id=new_order.id,
             product_id=product.id,
@@ -408,11 +419,13 @@ def get_order(current_user=Depends(get_current_user), db:session=Depends(get_db)
 
     for items in orders:
 
+        
         response.append({
             "order_id":items.id,
             "user_name":items.user.name,
             "total_price":items.total_price,
-            "status":items.status
+            "status":items.status,
+            "created_at":items.created_at
         })
 
     return response
@@ -429,7 +442,7 @@ def get_order_id(order_id:int , current_user=Depends(get_current_user), db:sessi
         raise HTTPException(status_code=404, detail="Order not found")
 
     order_items=db.query(Order_items).filter(
-        Order_items.order_id==Order.id
+        Order_items.order_id==order_id
     ).all()
 
     responses=[]
@@ -449,9 +462,9 @@ def get_order_id(order_id:int , current_user=Depends(get_current_user), db:sessi
     return {
         "order_id":order_product.id,
         "status":order_product.status,
-        "total_price":order_product.price,
-        "product":responses,
-        "created at":order_product.created_at
+        "total_price":order_product.total_price,
+        "products":responses,
+        "created_at":order_product.created_at
     }
 
 @app.put("/order/{order_id}/cancel")
