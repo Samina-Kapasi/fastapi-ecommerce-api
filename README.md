@@ -1,50 +1,179 @@
-# E-Commerce API 🚀
+# 🛒 ShopEase - Full Stack E-Commerce Website
 
-This is a backend E-Commerce API project built using FastAPI and MySQL.
+A modern Full Stack E-Commerce Web Application built using **React**, **FastAPI**, and **MySQL**. The application allows users to browse products, manage their shopping cart, place orders, and view their purchase history through a clean and responsive user interface.
 
-## Features
+---
 
-* Product Create API
-* MySQL Database Integration
-* SQLAlchemy ORM
-* FastAPI Backend
+## 🚀 Features
 
-## Tech Stack
+### 👤 Authentication
+- User Registration
+- User Login (JWT Authentication)
+- Secure Logout
+- Protected Routes
 
-* FastAPI
-* MySQL
-* SQLAlchemy
-* Pydantic
+### 🛍️ Products
+- View All Products
+- Product Details
+- Search Products
+- Filter Products
+- Product Categories
 
-## Installation
+### 🛒 Shopping Cart
+- Add Products to Cart
+- Update Product Quantity
+- Remove Products from Cart
+- Cart Price Calculation
 
-Clone the repository:
+### 📦 Orders
+- Place Orders
+- View Order History
+- View Order Details
+- Cancel Orders
+
+### 👤 User Profile
+- View Profile Information
+- Total Orders
+- Cart Items Overview
+
+### 🌐 Additional Pages
+- Home Page
+- About Us Page
+
+---
+
+# 🛠 Tech Stack
+
+### Frontend
+- React.js
+- React Router DOM
+- Material UI (MUI)
+- Axios
+
+### Backend
+- FastAPI
+- SQLAlchemy
+- Pydantic
+- JWT Authentication
+- Uvicorn
+
+### Database
+- MySQL
+
+---
+
+# 📂 Project Structure
+
+```
+Frontend/
+│
+├── components/
+├── pages/
+├── services/
+├── context/
+└── assets/
+
+Backend/
+│
+├── main.py
+├── models.py
+├── schemas.py
+├── database.py
+└── requirements.txt
+```
+
+---
+
+# ⚙ Installation
+
+## 1. Clone Repository
 
 ```bash
 git clone https://github.com/Samina-Kapasi/e-commerce_api.git
 ```
 
-Install dependencies:
+---
+
+## 2. Install Backend Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Run the server:
+---
+
+## 3. Start FastAPI Server
 
 ```bash
 uvicorn main:app --reload
 ```
 
-## API Documentation
+Backend will run at:
 
-Swagger Docs:
+```
+http://127.0.0.1:8000
+```
 
-```text
+---
+
+## 4. Start React Frontend
+
+```bash
+npm install
+
+npm run dev
+```
+
+Frontend will run at:
+
+```
+http://localhost:5173
+```
+
+---
+
+# 📖 API Documentation
+
+Swagger UI
+
+```
 http://127.0.0.1:8000/docs
 ```
 
-## Author
+---
 
-Samina Kapasi
-# e-commerce_api
+# 📸 Application Modules
+
+- 🏠 Home
+- 🔐 Login
+- 📝 Register
+- 🛍 Products
+- 📄 Product Details
+- 🛒 Shopping Cart
+- 📦 Orders
+- 📋 Order Details
+- 👤 Profile
+- ℹ About Us
+
+---
+
+# 🎯 Future Enhancements
+
+- Contact Page
+- FAQ Page
+- Wishlist
+- Admin Dashboard
+- Payment Gateway Integration
+- Email Notifications
+
+---
+
+# 👩‍💻 Author
+
+**Samina Kapasi**
+
+- GitHub: https://github.com/Samina-Kapasi
+
+---
+
+⭐ If you like this project, don't forget to give it a star!
