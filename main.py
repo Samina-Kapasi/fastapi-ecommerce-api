@@ -329,12 +329,22 @@ def login(form_user:OAuth2PasswordRequestForm=Depends(), db:session=Depends(get_
     }
 
 @app.get("/Logged-in_user")
-def login_users(current_user:User=Depends(get_current_user)):
+def login_users(current_user:User=Depends(get_current_user), db:session=Depends(get_db)):
+
+    total_orders=db.query(Order).filter(
+        Order.user_id==current_user.id
+    ).count()
+
+    cart_items=db.query(Cart).filter(
+        Cart.user_id==current_user.id
+    ).count()
 
     return {
         "id":current_user.id,
-        "user":current_user.name,
+        "name":current_user.name,
         "email":current_user.email,
+        "total_orders":total_orders,
+        "cart_items":cart_items
     }
 
 

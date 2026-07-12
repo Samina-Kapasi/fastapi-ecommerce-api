@@ -37,7 +37,7 @@ export default function Cart(){
         await api.delete(`/cart/${id}`);
         loadCart();
     }
-    const subtotal=items.reduce((a,b)=>a+b.price*b.quantity,0),gst=Math.round(subtotal*0.18),total=subtotal+gst;
+    const subtotal=items.reduce((a,b)=>a+b.price*b.Quantity,0),gst=Math.round(subtotal*0.18),total=subtotal+gst;
     if(loading)
         return <Box sx={{display:"flex",justifyContent:"center",mt:10}}><CircularProgress/></Box>;
     if(error)
@@ -57,8 +57,8 @@ export default function Cart(){
                 <Typography variant="h5">{i.product_name}</Typography>
                 <Typography color="primary">₹ {i.price}</Typography>
                 <Box sx={{display:"flex",alignItems:"center",gap:1,my:2}}><IconButton onClick={()=>updateQty(i,i.quantity-1)}><Remove/></IconButton>
-                <Typography>{i.quantity}</Typography>
-                <IconButton disabled={i.quantity>=i.stock} onClick={()=>updateQty(i,i.quantity+1)}><Add/></IconButton></Box><Typography>Subtotal: ₹ {i.price*i.quantity}</Typography>
+                <Typography>{i.Quantity}</Typography>
+                <IconButton disabled={i.Quantity>=i.stock} onClick={()=>updateQty(i,i.Quantity+1)}><Add/></IconButton></Box><Typography>Subtotal: ₹ {i.price*i.Quantity}</Typography>
                 <Button color="error" startIcon={<Delete/>} onClick={()=>removeItem(i.cart_id)}>Remove</Button></CardContent></Grid></Grid></Card>)}</Grid>
                 <Grid item xs={12} md={4}><Paper sx={{p:3}}>
                     <Typography variant="h5">Order Summary</Typography>
