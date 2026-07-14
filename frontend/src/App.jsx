@@ -14,6 +14,7 @@ import OrderDetails from "./pages/OrderDetails";
 import Profile from "./pages/Profile";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import FAQ from "./pages/FAQ";
 
 function App() {
   return (
@@ -44,6 +45,8 @@ function App() {
         <Route path="/about" element={<About />} />
 
         <Route path="/contact" element={<Contact />} />
+
+        <Route path="/FAQ" element={<FAQ />} />
 
       </Routes>
 

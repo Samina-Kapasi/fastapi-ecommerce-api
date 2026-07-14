@@ -90,6 +90,10 @@ function Navbar() {
             Contact
           </Button>
 
+          <Button component={Link} to="/FAQ" color="inherit">
+            FAQ
+          </Button>
+
           {isLoggedIn && (
             <>
               <Button component={Link} to="/orders" color="inherit">
