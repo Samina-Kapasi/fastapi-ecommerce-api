@@ -6,6 +6,8 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import api from "../services/api";
+import Loader from "../components/Loader";
+
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -91,9 +93,7 @@ function Products() {
       </Grid>
 
       {loading ? (
-        <Box display="flex" justifyContent="center" mt={8}>
-          <CircularProgress />
-        </Box>
+        <Loader />
       ) : error ? (
         <Alert severity="error">{error}</Alert>
       ) : (

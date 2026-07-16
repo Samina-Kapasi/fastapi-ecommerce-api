@@ -15,6 +15,8 @@ import Profile from "./pages/Profile";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
+import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoutes from "./components/PublicRoutes";
 
 function App() {
   return (
@@ -26,21 +28,63 @@ function App() {
 
         <Route path="/" element={<Home />} />
 
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={
+            <PublicRoutes>
+              <Login />
+            </PublicRoutes>
+          }
+        />
 
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/Register"
+          element={
+            <PublicRoutes>
+              <Register />
+            </PublicRoutes>
+          }
+        />
 
         <Route path="/products" element={<Products />} />
 
         <Route path="/products/:id" element={<ProductDetails />} />
 
-        <Route path="/cart" element={<Cart />} />
+        <Route
+          path="/Cart"
+          element={
+            <ProtectedRoute>
+              <Cart />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/orders" element={<Orders />} />
+        <Route
+          path="/Orders"
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/orders/:id" element={<OrderDetails />} />
+        <Route
+          path="/orders/:order_id"
+          element={
+            <ProtectedRoute>
+              <OrderDetails />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/profile" element={<Profile />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path="/about" element={<About />} />
 
