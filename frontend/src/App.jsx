@@ -17,6 +17,7 @@ import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoutes from "./components/PublicRoutes";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -91,6 +92,8 @@ function App() {
         <Route path="/contact" element={<Contact />} />
 
         <Route path="/FAQ" element={<FAQ />} />
+
+        <Route path="*" element={<NotFound />} />
 
       </Routes>
 
