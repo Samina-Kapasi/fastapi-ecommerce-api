@@ -7,6 +7,8 @@ import {
 import { Link } from "react-router-dom";
 import api from "../services/api";
 import Loader from "../components/Loader";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 
 
 function Products() {
@@ -18,6 +20,9 @@ function Products() {
   const [sort, setSort] = useState("");
   const [page, setPage] = useState(1);
   const limit = 6;
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
 
   useEffect(() => {
     fetchProducts();
@@ -44,7 +49,30 @@ function Products() {
       setLoading(false);
     }
   }
+  async function addToCart(productId) {
 
+  try {
+
+    const response = await api.post("/cart/add", {
+      product_id: productId,
+      quantity: 1,
+    });
+
+    setMessage("Product added to cart!");
+    setSeverity("success");
+    setOpen(true);
+
+  } catch (err) {
+
+    console.log(err.response);
+
+    setMessage("Failed to add product.");
+    setSeverity("error");
+    setOpen(true);
+
+  }
+
+}
   return (
     <Box sx={{ p:4, bgcolor:"#f5f5f5", minHeight:"100vh" }}>
       <Typography variant="h4" fontWeight="bold" mb={4}>
@@ -52,7 +80,7 @@ function Products() {
       </Typography>
 
       <Grid container spacing={2} mb={4}>
-        <Grid item xs={12} md={4}>
+        <Grid size={{xs: 12 , md : 4}}>
           <TextField
             fullWidth
             label="Search Product"
@@ -61,7 +89,7 @@ function Products() {
           />
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid size={{xs: 12 , md : 4}}>
           <TextField
             select
             fullWidth
@@ -77,7 +105,7 @@ function Products() {
           </TextField>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid size={{xs: 12 , md : 4}}>
           <TextField
             select
             fullWidth
@@ -100,12 +128,13 @@ function Products() {
         <>
           <Grid container spacing={3}>
             {products.length === 0 ? (
-              <Grid item xs={12}>
+              <Grid size={{ xs:12 }}>
                 <Alert severity="info">No products found.</Alert>
               </Grid>
             ) : (
               products.map((product) => (
-                <Grid item xs={12} sm={6} md={4} key={product.id}>
+                <Grid key={product.id} 
+                        size={{ xs: 12, sm: 6, md: 4 }}>
                   <Card sx={{
                     height:"100%",
                     display:"flex",
@@ -117,7 +146,7 @@ function Products() {
                     <CardMedia
                       component="img"
                       height="220"
-                      image={product.image || "https://via.placeholder.com/400x300?text=No+Image"}
+                      image={product.image || "https://placehold.co/400x300?text=No+Image"}
                       alt={product.name}
                     />
 
@@ -157,7 +186,8 @@ function Products() {
                         <Button
                           variant="contained"
                           fullWidth
-                          disabled={product.stock===0}
+                          disabled={product.stock === 0}
+                          onClick={() => addToCart(product.id)}
                         >
                           Add Cart
                         </Button>
@@ -169,7 +199,11 @@ function Products() {
             )}
           </Grid>
 
-          <Box display="flex" justifyContent="center" mt={5}>
+          <Box sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: 5,
+          }}>
             <Pagination
               count={10}
               page={page}
@@ -179,6 +213,21 @@ function Products() {
           </Box>
         </>
       )}
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => setOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <MuiAlert
+          onClose={() => setOpen(false)}
+          severity={severity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {message}
+        </MuiAlert>
+      </Snackbar>
     </Box>
   );
 }

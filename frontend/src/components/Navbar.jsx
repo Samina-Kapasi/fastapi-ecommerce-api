@@ -110,20 +110,22 @@ function Navbar() {
         {/* Search */}
 
         <TextField
-          size="small"
-          placeholder="Search Products..."
-          sx={{
-            width: 300,
-            bgcolor: "#f5f5f5",
-            borderRadius: 2,
-          }}
-          InputProps={{
+        size="small"
+        placeholder="Search Products..."
+        sx={{
+          width: 300,
+          bgcolor: "#f5f5f5",
+          borderRadius: 2,
+        }}
+        slotProps={{
+          input: {
             startAdornment: (
               <InputAdornment position="start">
                 <SearchIcon />
               </InputAdornment>
             ),
-          }}
+          },
+        }}
         />
 
         {/* Right Side */}

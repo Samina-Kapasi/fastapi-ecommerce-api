@@ -34,7 +34,7 @@ function Footer() {
 
           {/* Company */}
 
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs:12 , md:4 }}>
 
             <Typography
               variant="h4"
@@ -58,7 +58,7 @@ function Footer() {
           </Grid>
                     {/* Quick Links */}
 
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid size = {{xs:12 , sm:6 , md:4 }}>
 
             <Typography
               variant="h6"
@@ -151,7 +151,7 @@ function Footer() {
 
           {/* Contact Information */}
 
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid size={{ xs:12 , sm:6 , md:4 }}>
 
             <Typography
               variant="h6"

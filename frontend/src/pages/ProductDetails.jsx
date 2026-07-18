@@ -59,6 +59,14 @@ function ProductDetails() {
     }
 
   }
+  async function addToCart() {
+
+  console.log("Button clicked");
+
+  alert("Button clicked");
+
+
+}
 
   if (loading) {
 
@@ -119,7 +127,7 @@ function ProductDetails() {
             <img
               src={
                 product.image ||
-                "https://via.placeholder.com/500x350?text=No+Image"
+                "https://placehold.co/400x300?text=No+Image"
               }
               alt={product.name}
               style={{
@@ -201,15 +209,15 @@ function ProductDetails() {
               variant="contained"
               startIcon={<ShoppingCartIcon />}
               size="large"
+              onClick={addToCart}
+              disabled={product.stock === 0}
               sx={{
                 mt: 4,
                 borderRadius: 3,
                 px: 5,
               }}
             >
-
               Add To Cart
-
             </Button>
 
           </Grid>
