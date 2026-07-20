@@ -24,7 +24,7 @@ import {
 
 function OrderDetails() {
 
-  const { id } = useParams();
+  const { order_id } = useParams();
 
   const [order, setOrder] = useState(null);
 
@@ -38,7 +38,7 @@ function OrderDetails() {
 
       try {
 
-        const response = await api.get(`/orders/${id}`);
+        const response = await api.get(`/orders/${order_id}`);
 
         setOrder(response.data);
 
@@ -56,7 +56,7 @@ function OrderDetails() {
 
     fetchOrder();
 
-  }, [id]);
+  }, [order_id]);
 
   if (loading) {
 
@@ -136,7 +136,7 @@ function OrderDetails() {
           mb={4}
         >
 
-          <Grid item xs={12} md={3}>
+          <Grid size={{xs:12 , md:3 }}>
 
             <Card>
 
@@ -159,7 +159,7 @@ function OrderDetails() {
 
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid size={{xs:12, md:3 }}>
 
             <Card>
 
@@ -187,7 +187,7 @@ function OrderDetails() {
 
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid size = {{xs:12, md:3}}>
 
             <Card>
 
@@ -207,7 +207,7 @@ function OrderDetails() {
 
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid size={{xs:12, md:3}}>
 
             <Card>
 
@@ -362,10 +362,10 @@ function OrderDetails() {
           }}
         >
 
-          <Grid item xs={12} md={7}>
+          <Grid size={{xs:12 ,md:7}}>
           </Grid>
 
-          <Grid item xs={12} md={5}>
+          <Grid size={{xs:12 , md:5}}>
 
             <Paper
               elevation={3}

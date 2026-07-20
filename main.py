@@ -466,7 +466,8 @@ def get_order_id(order_id:int , current_user=Depends(get_current_user), db:sessi
         responses.append({
             "product_name": product.name,
             "quantity": items.quantity,
-            "price":items.price
+            "price":items.price,
+            "image": product.image
         })
 
     return {
