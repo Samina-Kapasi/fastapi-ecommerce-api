@@ -18,6 +18,9 @@ import FAQ from "./pages/FAQ";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoutes from "./components/PublicRoutes";
 import NotFound from "./pages/NotFound";
+import Admin from "./pages/Admin";
+import AdminProducts from "./pages/AdminProducts";
+import AddProduct from "./pages/AddProduct";
 
 function App() {
   return (
@@ -87,6 +90,32 @@ function App() {
           }
         />
 
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <Admin />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/products"
+          element={
+            <ProtectedRoute>
+              <AdminProducts />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/add-product"
+          element={
+            <ProtectedRoute>
+              <AddProduct />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/about" element={<About />} />
 
         <Route path="/contact" element={<Contact />} />
