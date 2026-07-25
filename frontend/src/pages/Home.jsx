@@ -1,8 +1,12 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 import {
   Box,
   Button,
   Card,
   CardContent,
+  CardMedia,
   Grid,
   Typography,
   Paper,
@@ -14,12 +18,10 @@ import SecurityIcon from "@mui/icons-material/Security";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import StarIcon from "@mui/icons-material/Star";
 
+import api from "../services/api";
+
 function Home() {
-  const products = [
-    { id: 1, name: "Gaming Mouse", price: 599 },
-    { id: 2, name: "Mechanical Keyboard", price: 2499 },
-    { id: 3, name: "Wireless Headphones", price: 3999 },
-  ];
+  const [products, setProducts] = useState([]);
 
   const categories = [
     "Electronics",
@@ -28,14 +30,32 @@ function Home() {
     "Accessories",
   ];
 
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  async function fetchProducts() {
+    try {
+      const response = await api.get("/filter", {
+        params: {
+          page: 1,
+          limit: 6,
+        },
+      });
+
+      setProducts(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <Box sx={{ bgcolor: "#f8f9fa", minHeight: "100vh" }}>
       {/* Hero Section */}
 
       <Box
         sx={{
-          background:
-            "linear-gradient(to right,#1976d2,#42a5f5)",
+          background: "linear-gradient(to right,#1976d2,#42a5f5)",
           color: "white",
           textAlign: "center",
           py: 10,
@@ -50,6 +70,8 @@ function Home() {
         </Typography>
 
         <Button
+          component={Link}
+          to="/products"
           variant="contained"
           color="warning"
           sx={{ mt: 4 }}
@@ -76,6 +98,13 @@ function Home() {
                   textAlign: "center",
                   fontWeight: "bold",
                   fontSize: "20px",
+                  cursor: "pointer",
+                  transition: "0.3s",
+                  "&:hover": {
+                    bgcolor: "#1976d2",
+                    color: "white",
+                    transform: "translateY(-5px)",
+                  },
                 }}
               >
                 {category}
@@ -85,7 +114,7 @@ function Home() {
         </Grid>
       </Box>
 
-      {/* Products */}
+      {/* Featured Products */}
 
       <Box sx={{ p: 5 }}>
         <Typography variant="h4" fontWeight="bold" gutterBottom>
@@ -94,34 +123,50 @@ function Home() {
 
         <Grid container spacing={3}>
           {products.map((product) => (
-            <Grid item xs={12} md={4} key={product.id}>
-              <Card elevation={5}>
+            <Grid item xs={12} sm={6} md={4} key={product.id}>
+              <Card
+                elevation={5}
+                sx={{
+                  height: "100%",
+                  transition: "0.3s",
+                  "&:hover": {
+                    transform: "translateY(-8px)",
+                    boxShadow: 8,
+                  },
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  height="220"
+                  image={
+                    product.image ||
+                    "https://via.placeholder.com/300x220?text=No+Image"
+                  }
+                  alt={product.name}
+                />
+
                 <CardContent>
-
-                  <Box
-                    sx={{
-                      height: 180,
-                      bgcolor: "#eeeeee",
-                      mb: 2,
-                    }}
-                  />
-
-                  <Typography variant="h6">
+                  <Typography
+                    variant="h6"
+                    fontWeight="bold"
+                    gutterBottom
+                  >
                     {product.name}
                   </Typography>
 
-                  <Typography color="primary">
+                  <Typography color="primary" fontWeight="bold">
                     ₹ {product.price}
                   </Typography>
 
                   <Button
+                    component={Link}
+                    to={`/products/${product.id}`}
                     variant="contained"
                     fullWidth
                     sx={{ mt: 2 }}
                   >
-                    Add to Cart
+                    View Product
                   </Button>
-
                 </CardContent>
               </Card>
             </Grid>
@@ -137,7 +182,6 @@ function Home() {
         </Typography>
 
         <Grid container spacing={3}>
-
           <Grid item xs={12} md={3}>
             <Paper sx={{ p: 3, textAlign: "center" }}>
               <LocalShippingIcon color="primary" sx={{ fontSize: 50 }} />
@@ -165,7 +209,6 @@ function Home() {
               <Typography>24/7 Support</Typography>
             </Paper>
           </Grid>
-
         </Grid>
       </Box>
     </Box>

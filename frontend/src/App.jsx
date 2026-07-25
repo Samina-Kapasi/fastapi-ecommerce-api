@@ -21,6 +21,7 @@ import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
 import AdminProducts from "./pages/AdminProducts";
 import AddProduct from "./pages/AddProduct";
+import EditProduct from "./pages/EditProduct";
 
 function App() {
   return (
@@ -116,6 +117,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/admin/edit-product/:product_id"
+          element={
+            <ProtectedRoute>
+              <EditProduct />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/about" element={<About />} />
 
         <Route path="/contact" element={<Contact />} />

@@ -121,12 +121,14 @@ async function deleteProduct(productId) {
 
                 <TableCell align="center">
                   <Button
+                    component={Link}
+                    to={`/admin/edit-product/${product.id}`}
                     variant="outlined"
                     size="small"
                     sx={{ mr: 1 }}
-                  >
+                    >
                     Edit
-                  </Button>
+                    </Button>
 
                   <Button
                     variant="contained"
