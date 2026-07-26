@@ -464,10 +464,10 @@ def get_order_id(order_id:int , current_user=Depends(get_current_user), db:sessi
         ).first()
 
         responses.append({
-            "product_name": product.name,
+            "product_name": product.name if product else "Product No Longer Available ",
             "quantity": items.quantity,
             "price":items.price,
-            "image": product.image
+            "image": product.image if product else "https://placehold.co/400x300?text=Unavailable" 
         })
 
     return {

@@ -133,18 +133,31 @@ function Orders() {
   return (
     <Box
       sx={{
-        p: 5,
-        bgcolor: "#f5f5f5",
-        minHeight: "100vh",
-      }}
+      p: {
+        xs: 3,
+        md: 5,
+      },
+      bgcolor: "#f5f5f5",
+      minHeight: "100vh",
+    }}
     >
-      <Typography
-        variant="h4"
-        fontWeight="bold"
-        mb={4}
-      >
-        My Orders
-      </Typography>
+      <Box mb={4}>
+
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+        >
+          My Orders
+        </Typography>
+
+        <Typography
+          color="text.secondary"
+          sx={{ mt: 1 }}
+        >
+          View and manage all your previous orders.
+        </Typography>
+
+      </Box>
 
       <Grid container spacing={3}>
                 {orders.map((order) => (
@@ -158,11 +171,20 @@ function Orders() {
             <Card
               elevation={4}
               sx={{
-                borderRadius: 3,
+                borderRadius: 4,
+                transition: "0.3s",
+
+                "&:hover": {
+                  transform: "translateY(-5px)",
+                  boxShadow: 8,
+                },
               }}
             >
 
-              <CardContent>
+              <CardContent
+               sx={{
+                  p: 3,
+                }}>
 
                 <Grid
                   container
@@ -200,6 +222,14 @@ function Orders() {
                       Total Price : ₹ {order.total_price}
                     </Typography>
 
+                    <Typography
+                      color="text.secondary"
+                      sx={{ mt: 1 }}
+                    >
+                      Ordered on{" "}
+                      {new Date(order.created_at).toLocaleDateString()}
+                    </Typography>
+
                   </Grid>
 
                   {/* Right Section */}
@@ -224,12 +254,23 @@ function Orders() {
                           : "success"
                       }
                       sx={{
-                        mb: 2,
-                        fontWeight: "bold",
+                          mb: 2,
+                          px: 1,
+                          fontWeight: "bold",
                       }}
                     />
 
-                    <Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 2,
+                        justifyContent: {
+                          xs: "flex-start",
+                          md: "flex-end",
+                        },
+                        flexWrap: "wrap",
+                      }}
+                    >
 
                       <Button
                         variant="contained"
