@@ -19,59 +19,35 @@ import {
 } from "@mui/material";
 
 function Profile() {
-
   const navigate = useNavigate();
-
   const { logout } = useAuth();
 
   const [profile, setProfile] = useState(null);
-
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState("");
 
   useEffect(() => {
-
-    async function fetchProfile() {
-
-      try {
-
-        const response = await api.get("/Logged-in_user");
-
-        setProfile(response.data);
-
-      }
-
-      catch (err) {
-
-        setError("Unable to load profile.");
-
-      }
-
-      finally {
-
-        setLoading(false);
-
-      }
-
-    }
-
     fetchProfile();
-
   }, []);
 
+  async function fetchProfile() {
+    try {
+      const response = await api.get("/Logged-in_user");
+      setProfile(response.data);
+    } catch (err) {
+      setError("Unable to load profile.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   function handleLogout() {
-
     logout();
-
     navigate("/login");
-
   }
 
   if (loading) {
-
     return (
-
       <Box
         sx={{
           display: "flex",
@@ -80,35 +56,20 @@ function Profile() {
           height: "80vh",
         }}
       >
-
         <CircularProgress />
-
       </Box>
-
     );
-
   }
 
   if (error) {
-
     return (
-
       <Box sx={{ p: 5 }}>
-
-        <Alert severity="error">
-
-          {error}
-
-        </Alert>
-
+        <Alert severity="error">{error}</Alert>
       </Box>
-
     );
-
   }
 
   return (
-
     <Box
       sx={{
         backgroundColor: "#f5f7fb",
@@ -116,7 +77,6 @@ function Profile() {
         py: 5,
       }}
     >
-
       <Paper
         elevation={4}
         sx={{
@@ -126,6 +86,7 @@ function Profile() {
           borderRadius: 4,
         }}
       >
+        {/* Header */}
 
         <Box
           sx={{
@@ -134,7 +95,6 @@ function Profile() {
             alignItems: "center",
           }}
         >
-
           <Avatar
             sx={{
               width: 110,
@@ -144,186 +104,187 @@ function Profile() {
               mb: 2,
             }}
           >
-
             {profile.name.charAt(0).toUpperCase()}
-
           </Avatar>
 
-          <Typography
-            variant="h4"
-            fontWeight="bold"
-          >
+          <Typography variant="h4" fontWeight="bold">
             Welcome, {profile.name} 👋
           </Typography>
 
-          <Typography
-            color="text.secondary"
-            mt={1}
-          >
+          <Typography color="text.secondary" mt={1}>
             Manage your account information
           </Typography>
-
         </Box>
 
         <Divider sx={{ my: 4 }} />
 
-        <Grid
-          container
-          spacing={3}
+        <Grid container spacing={3}>
+          {/* Personal Information */}
+
+<Grid item xs={12} md={6}>
+  <Card
+    elevation={3}
+    sx={{
+      borderRadius: 3,
+      height: "100%",
+    }}
+  >
+    <CardContent>
+      <Typography
+        variant="h6"
+        fontWeight="bold"
+        gutterBottom
+      >
+        Personal Information
+      </Typography>
+
+      <Divider sx={{ mb: 3 }} />
+
+      <Typography color="text.secondary">
+        Full Name
+      </Typography>
+
+      <Typography variant="h6" mb={2}>
+        {profile.name}
+      </Typography>
+
+      <Typography color="text.secondary">
+        Email Address
+      </Typography>
+
+      <Typography variant="h6" mb={2}>
+        {profile.email}
+      </Typography>
+
+      <Typography color="text.secondary">
+        User ID
+      </Typography>
+
+      <Typography variant="h6">
+        #{profile.id}
+      </Typography>
+    </CardContent>
+  </Card>
+</Grid>
+
+{/* Account Overview */}
+
+<Grid item xs={12} md={6}>
+  <Card
+    elevation={3}
+    sx={{
+      borderRadius: 3,
+      height: "100%",
+    }}
+  >
+    <CardContent>
+      <Typography
+        variant="h6"
+        fontWeight="bold"
+        gutterBottom
+      >
+        Account Overview
+      </Typography>
+
+      <Divider sx={{ mb: 3 }} />
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 3,
+        }}
+      >
+        <Typography>
+          Total Orders
+        </Typography>
+
+        <Typography
+          fontWeight="bold"
+          color="primary"
         >
-                  <Grid item xs={12} md={6}>
+          {profile.total_orders}
+        </Typography>
+      </Box>
 
-            <Card
-              elevation={3}
-              sx={{
-                borderRadius: 3,
-                height: "100%",
-              }}
-            >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 3,
+        }}
+      >
+        <Typography>
+          Cart Items
+        </Typography>
 
-              <CardContent>
+        <Typography
+          fontWeight="bold"
+          color="success.main"
+        >
+          {profile.cart_items}
+        </Typography>
+      </Box>
 
-                <Typography
-                  variant="h6"
-                  fontWeight="bold"
-                  gutterBottom
-                >
-                  Personal Information
-                </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 3,
+        }}
+      >
+        <Typography>
+          Account Status
+        </Typography>
 
-                <Divider sx={{ mb: 3 }} />
+        <Typography
+          fontWeight="bold"
+          color="success.main"
+        >
+          Active
+        </Typography>
+      </Box>
 
-                <Typography
-                  color="text.secondary"
-                >
-                  Full Name
-                </Typography>
+      <Divider sx={{ my: 3 }} />
 
-                <Typography
-                  variant="h6"
-                  mb={2}
-                >
-                  {profile.name}
-                </Typography>
+      <Typography
+        variant="h6"
+        fontWeight="bold"
+        gutterBottom
+      >
+        Quick Actions
+      </Typography>
 
-                <Typography
-                  color="text.secondary"
-                >
-                  Email Address
-                </Typography>
+      <Button
+        fullWidth
+        variant="contained"
+        sx={{ mb: 2 }}
+        onClick={() => navigate("/orders")}
+      >
+        My Orders
+      </Button>
 
-                <Typography
-                  variant="h6"
-                  mb={2}
-                >
-                  {profile.email}
-                </Typography>
+      <Button
+        fullWidth
+        variant="outlined"
+        sx={{ mb: 2 }}
+        onClick={() => navigate("/cart")}
+      >
+        View Cart
+      </Button>
 
-                <Typography
-                  color="text.secondary"
-                >
-                  User ID
-                </Typography>
-
-                <Typography
-                  variant="h6"
-                >
-                  #{profile.id}
-                </Typography>
-
-              </CardContent>
-
-            </Card>
-
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-
-            <Card
-              elevation={3}
-              sx={{
-                borderRadius: 3,
-                height: "100%",
-              }}
-            >
-
-              <CardContent>
-
-                <Typography
-                  variant="h6"
-                  fontWeight="bold"
-                  gutterBottom
-                >
-                  Account Overview
-                </Typography>
-
-                <Divider sx={{ mb: 3 }} />
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    mb: 3,
-                  }}
-                >
-
-                  <Typography>
-                    Total Orders
-                  </Typography>
-
-                  <Typography
-                    fontWeight="bold"
-                    color="primary"
-                  >
-                    {profile.total_orders}
-                  </Typography>
-
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    mb: 3,
-                  }}
-                >
-
-                  <Typography>
-                    Cart Items
-                  </Typography>
-
-                  <Typography
-                    fontWeight="bold"
-                    color="success.main"
-                  >
-                    {profile.cart_items}
-                  </Typography>
-
-                </Box>
-
-                <Divider sx={{ my: 3 }} />
-
-                <Button
-                  variant="contained"
-                  color="error"
-                  fullWidth
-                  size="large"
-                  onClick={handleLogout}
-                  sx={{
-                    py: 1.5,
-                    borderRadius: 3,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Logout
-                </Button>
-
-              </CardContent>
-
-            </Card>
-
-          </Grid>
-                  </Grid>
+      <Button
+        fullWidth
+        variant="contained"
+        color="error"
+        onClick={handleLogout}
+      >
+        Logout
+      </Button>
+    </CardContent>
+  </Card>
+</Grid>
+        </Grid>
 
       </Paper>
 
