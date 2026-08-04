@@ -121,7 +121,7 @@ function Profile() {
         <Grid container spacing={3}>
           {/* Personal Information */}
 
-<Grid item xs={12} md={6}>
+<Grid size = {{ xs:12 , md:6}}>
   <Card
     elevation={3}
     sx={{
@@ -169,7 +169,7 @@ function Profile() {
 
 {/* Account Overview */}
 
-<Grid item xs={12} md={6}>
+<Grid size = {{xs:12 , md:6}}>
   <Card
     elevation={3}
     sx={{

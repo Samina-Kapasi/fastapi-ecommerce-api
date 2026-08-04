@@ -39,10 +39,12 @@ function About() {
           <Grid
             container
             spacing={5}
-            alignItems="center"
+            sx = {{
+              alignItems:"center"
+            }}
           >
 
-            <Grid item xs={12} md={7}>
+            <Grid size = {{xs:12 ,md:7}}>
 
               <Typography
                 variant="h2"
@@ -87,12 +89,7 @@ function About() {
 
             </Grid>
 
-            <Grid
-              item
-              xs={12}
-              md={5}
-              textAlign="center"
-            >
+            <Grid size={{ xs: 12, md: 5 }} sx = {{textAlign:"center" }}>
 
               <ShoppingBagIcon
                 sx={{
@@ -115,16 +112,16 @@ function About() {
         <Typography
           variant="h3"
           fontWeight="bold"
-          textAlign="center"
           gutterBottom
+          sx= {{textAlign:"center"}}
         >
           Why Choose ShopEase?
         </Typography>
 
         <Typography
-          textAlign="center"
           color="text.secondary"
           sx={{
+            textAlign:"center",
             mb: 6,
             maxWidth: 700,
             mx: "auto",
@@ -136,7 +133,7 @@ function About() {
 
         <Grid container spacing={4}>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size = {{xs:12, sm:6, md:3}}>
 
             <Paper
               elevation={4}
@@ -175,7 +172,7 @@ function About() {
 
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size = {{xs:12, sm:6, md:3}}>
 
             <Paper
               elevation={4}
@@ -214,7 +211,7 @@ function About() {
 
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size = {{xs:12, sm:6, md:3}}>
 
             <Paper
               elevation={4}
@@ -253,7 +250,7 @@ function About() {
 
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size = {{xs:12, sm:6, md:3}}>
 
             <Paper
               elevation={4}
@@ -300,15 +297,15 @@ function About() {
           <Typography
             variant="h3"
             fontWeight="bold"
-            textAlign="center"
             gutterBottom
+            sx = {{textAlign:"center"}}
           >
             ShopEase at a Glance
           </Typography>
 
           <Grid container spacing={4} sx={{ mt: 2 }}>
 
-            <Grid item xs={6} md={3}>
+            <Grid size={{ xs:6 , md:3 }}>
               <Paper
                 elevation={4}
                 sx={{
@@ -328,7 +325,7 @@ function About() {
               </Paper>
             </Grid>
 
-            <Grid item xs={6} md={3}>
+            <Grid size={{ xs:6 , md:3 }}>
               <Paper
                 elevation={4}
                 sx={{
@@ -348,7 +345,7 @@ function About() {
               </Paper>
             </Grid>
 
-            <Grid item xs={6} md={3}>
+            <Grid size={{ xs:6 , md:3 }}>
               <Paper
                 elevation={4}
                 sx={{
@@ -368,7 +365,7 @@ function About() {
               </Paper>
             </Grid>
 
-            <Grid item xs={6} md={3}>
+            <Grid size={{ xs:6 , md:3 }}>
               <Paper
                 elevation={4}
                 sx={{
@@ -414,7 +411,7 @@ function About() {
 
           <Typography
             color="text.secondary"
-            lineHeight={2}
+            sx = {{lineHeight : 2}}
           >
             Our mission is to make online shopping simple, secure, and
             enjoyable for everyone. We continuously strive to provide

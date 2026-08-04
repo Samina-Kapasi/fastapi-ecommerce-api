@@ -70,7 +70,10 @@ function Navbar() {
 
         <Box
           sx={{
-            display: "flex",
+            display: {
+              xs: "none",
+              md: "flex",
+            },
             gap: 3,
           }}
         >
@@ -113,7 +116,11 @@ function Navbar() {
         size="small"
         placeholder="Search Products..."
         sx={{
-          width: 300,
+          width: {
+            xs: 120,
+            sm: 180,
+            md: 300,
+          },
           bgcolor: "#f5f5f5",
           borderRadius: 2,
         }}

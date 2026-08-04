@@ -58,14 +58,38 @@ function Home() {
           background: "linear-gradient(to right,#1976d2,#42a5f5)",
           color: "white",
           textAlign: "center",
-          py: 10,
+          py:
+            {
+            xs: 6,
+            sm: 8,
+            md: 10,
+          },
+          px: 2,
         }}
       >
-        <Typography variant="h2" fontWeight="bold">
+        <Typography 
+          fontWeight="bold"
+          sx={{
+            fontSize: {
+              xs: "2.5rem",
+              sm: "3.5rem",
+              md: "4.5rem",
+            },
+            lineHeight: 1.2,
+        }}>
           Welcome to ShopEase
         </Typography>
 
-        <Typography variant="h6" sx={{ mt: 2 }}>
+        <Typography 
+          sx={{
+          mt: 2,
+          fontSize: {
+            xs: "1.1rem",
+            sm: "1.3rem",
+            md: "1.5rem",
+          },
+          px: 2,
+        }}>
           Discover Amazing Products at the Best Prices
         </Typography>
 
@@ -90,7 +114,8 @@ function Home() {
 
         <Grid container spacing={3}>
           {categories.map((category) => (
-            <Grid item xs={12} md={3} key={category}>
+            <Grid size={{ xs: 12, md: 3 }}
+                  key={category}>
               <Paper
                 elevation={4}
                 sx={{
@@ -123,7 +148,7 @@ function Home() {
 
         <Grid container spacing={3}>
           {products.map((product) => (
-            <Grid item xs={12} sm={6} md={4} key={product.id}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={product.id}>
               <Card
                 elevation={5}
                 sx={{
@@ -182,28 +207,28 @@ function Home() {
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} md={3}>
+          <Grid size ={{xs:12 ,md:3}}>
             <Paper sx={{ p: 3, textAlign: "center" }}>
               <LocalShippingIcon color="primary" sx={{ fontSize: 50 }} />
               <Typography>Fast Delivery</Typography>
             </Paper>
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid size ={{xs:12 ,md:3}}>
             <Paper sx={{ p: 3, textAlign: "center" }}>
               <SecurityIcon color="primary" sx={{ fontSize: 50 }} />
               <Typography>Secure Payment</Typography>
             </Paper>
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid size ={{xs:12 ,md:3}}>
             <Paper sx={{ p: 3, textAlign: "center" }}>
               <StarIcon color="primary" sx={{ fontSize: 50 }} />
               <Typography>Premium Quality</Typography>
             </Paper>
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid size ={{xs:12 ,md:3}}>
             <Paper sx={{ p: 3, textAlign: "center" }}>
               <SupportAgentIcon color="primary" sx={{ fontSize: 50 }} />
               <Typography>24/7 Support</Typography>

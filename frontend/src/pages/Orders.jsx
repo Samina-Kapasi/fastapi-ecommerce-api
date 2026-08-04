@@ -163,10 +163,7 @@ function Orders() {
                 {orders.map((order) => (
 
           <Grid
-            item
-            xs={12}
-            key={order.order_id}
-          >
+            size={{ xs: 12 }} key={order.order_id} >
 
             <Card
               elevation={4}
@@ -189,16 +186,12 @@ function Orders() {
                 <Grid
                   container
                   spacing={2}
-                  alignItems="center"
+                  sx = {{alignItems:"center"}}
                 >
 
                   {/* Left Section */}
 
-                  <Grid
-                    item
-                    xs={12}
-                    md={8}
-                  >
+                  <Grid size={{xs:12 , md:8}}>
 
                     <Typography
                       variant="h6"
@@ -234,14 +227,12 @@ function Orders() {
 
                   {/* Right Section */}
 
-                  <Grid
-                    item
-                    xs={12}
-                    md={4}
-                    textAlign={{
+                  <Grid size = {{xs:12 , md:4}}
+                    sx = {{textAlign: {
                       xs: "left",
                       md: "right",
-                    }}
+                    }
+                  }}
                   >
 
                     <Chip
