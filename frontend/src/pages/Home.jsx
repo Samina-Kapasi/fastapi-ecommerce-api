@@ -17,6 +17,7 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import SecurityIcon from "@mui/icons-material/Security";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import StarIcon from "@mui/icons-material/Star";
+import noImage from "../assets/products/no-image.png";
 
 import api from "../services/api";
 
@@ -165,7 +166,7 @@ function Home() {
                   height="220"
                   image={
                     product.image ||
-                    "https://via.placeholder.com/300x220?text=No+Image"
+                    noImage
                   }
                   alt={product.name}
                 />

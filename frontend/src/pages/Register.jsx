@@ -154,7 +154,8 @@ function Register() {
           margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          InputProps={{
+          slotProps={{
+            input : {
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
@@ -170,6 +171,7 @@ function Register() {
                 </IconButton>
               </InputAdornment>
             ),
+          },
           }}
         />
 

@@ -112,7 +112,8 @@ function Login() {
           type={showPassword ? "text" : "password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          InputProps={{
+          slotProps={{
+            input : {
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
@@ -128,6 +129,7 @@ function Login() {
                 </IconButton>
               </InputAdornment>
             ),
+          },
           }}
         />
 

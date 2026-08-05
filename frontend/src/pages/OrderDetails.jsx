@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import noImage from "../assets/products/no-image.png";
 
 import api from "../services/api";
 
@@ -298,7 +299,7 @@ function OrderDetails() {
                     <img
                       src={
                         product.image ||
-                        "https://via.placeholder.com/80"
+                        noImage
                       }
                       alt={product.product_name}
                       style={{
