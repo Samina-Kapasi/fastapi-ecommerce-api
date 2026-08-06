@@ -106,6 +106,9 @@ function Navbar() {
               <Button component={Link} to="/profile" color="inherit">
                 Profile
               </Button>
+              <Button component={Link} to="/admin" color="inherit">
+                Admin
+              </Button>
             </>
           )}
         </Box>
@@ -200,6 +203,14 @@ function Navbar() {
                   onClick={handleClose}
                 >
                   Orders
+                </MenuItem>
+
+                <MenuItem
+                  component={Link}
+                  to="/admin"
+                  onClick={handleClose}
+                >
+                  Admin Dashboard
                 </MenuItem>
 
                 <MenuItem

@@ -32,7 +32,7 @@ function EditProduct() {
 
   useEffect(() => {
     fetchProduct();
-  }, []);
+  }, [product_id]);
 
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -46,10 +46,11 @@ function EditProduct() {
 
       setProduct(response.data);
 
-    } catch {
-
-      setError("Unable to load product.");
-
+    } catch (err){
+        setError(
+        err.response?.data?.detail ||
+        "Unable to load product."
+      );
     }
 
   }
@@ -63,7 +64,7 @@ function EditProduct() {
 
   }
 
-  async function handleUpdate() {
+  async function handleUpdate(e) {
 
   try {
 
@@ -76,8 +77,6 @@ function EditProduct() {
     setTimeout(() => {
       navigate("/admin/products");
     }, 1500);
-
-    navigate("/admin/products");
 
   } catch (err) {
 
