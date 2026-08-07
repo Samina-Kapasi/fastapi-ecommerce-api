@@ -23,7 +23,7 @@ function AddProduct() {
     price: "",
     stock: "",
     category: "",
-    image: "",
+    image: null,
   });
 
   const [error, setError] = useState("");
@@ -43,7 +43,16 @@ function AddProduct() {
 
     try {
 
-      await api.post("/product", product);
+      const formData = new FormData();
+
+      formData.append("name", product.name);
+      formData.append("description", product.description);
+      formData.append("price", product.price);
+      formData.append("stock", product.stock);
+      formData.append("category", product.category);
+      formData.append("image", product.image);
+
+      await api.post("/product", formData);
 
       alert("Product added successfully!");
 
@@ -152,13 +161,60 @@ function AddProduct() {
             </Grid>
 
             <Grid size={{ xs: 12 }}>
-              <TextField
+              <Box sx={{ mt: 2 }}>
+
+              <Button
+                variant="outlined"
+                component="label"
                 fullWidth
-                label="Image URL"
-                name="image"
-                value={product.image}
-                onChange={handleChange}
-              />
+              >
+                Choose Product Image
+
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+
+                    if (file) {
+                      setProduct({
+                        ...product,
+                        image: file,
+                      });
+                    }
+                  }}
+                />
+              </Button>
+
+              {product.image && (
+                <Box sx={{ mt: 2, textAlign: "center" }}>
+
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 1 }}
+                  >
+                    Selected: {product.image.name}
+                  </Typography>
+
+                  <Box
+                    component="img"
+                    src={URL.createObjectURL(product.image)}
+                    alt="Product preview"
+                    sx={{
+                      width: 180,
+                      height: 180,
+                      objectFit: "cover",
+                      borderRadius: 2,
+                      border: "1px solid #ddd",
+                    }}
+                  />
+
+                </Box>
+              )}
+
+            </Box>
             </Grid>
 
           </Grid>

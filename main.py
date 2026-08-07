@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException,  UploadFile, File, Form
 from database import Base, engine, get_db
 from models import Product, Cart, User, Order, Order_items
 from schemas import ProductCreate, Update_ProductCreate, CreateCart, Update_Cart, CreateUser, UserLogin, Create_Order
@@ -8,8 +8,18 @@ from security import hash_password, verify_password
 from auth import create_access_token, get_current_user
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
 
 app=FastAPI()
+
+os.makedirs("uploads", exist_ok=True)
+
+app.mount(
+    "/uploads",
+    StaticFiles(directory="uploads"),
+    name="uploads",
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -34,15 +44,28 @@ def home():
 # Product Management
 
 @app.post("/product")
-def create_product(product:ProductCreate, db:session=Depends(get_db)):
+async def create_product(
+                            name: str = Form(...),
+                            description: str = Form(...),
+                            price: float = Form(...),
+                            stock: int = Form(...),
+                            category: str = Form(...),
+                            image: UploadFile = File(...),
+                            db: session = Depends(get_db),
+                        ):
 
-    new_product=Product(
-        name = product.name,
-        description = product.description,
-        price = product.price ,
-        stock = product.stock,
-        category = product.category,
-        image = product.image
+    file_path = f"uploads/{image.filename}"
+
+    with open(file_path, "wb") as buffer:
+        buffer.write(await image.read())
+
+    new_product = Product(
+    name=name,
+    description=description,
+    price=price,
+    stock=stock,
+    category=category,
+    image=file_path,
     )
 
     db.add(new_product)

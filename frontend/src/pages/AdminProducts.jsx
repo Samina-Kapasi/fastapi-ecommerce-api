@@ -17,9 +17,13 @@ import {
   DialogContentText,
   DialogActions,
   Snackbar,
+  TextField,
+  InputAdornment,
+  Pagination,
 } from "@mui/material";
 
 import MuiAlert from "@mui/material/Alert";
+import SearchIcon from "@mui/icons-material/Search";
 
 import { Link } from "react-router-dom";
 import api from "../services/api";
@@ -34,6 +38,9 @@ function AdminProducts() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("success");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const productsPerPage = 5;
 
   useEffect(() => {
     fetchProducts();
@@ -96,11 +103,54 @@ async function deleteProduct() {
   }
 
 }
+  
+  const filteredProducts = products.filter((product) =>
+  product.name.toLowerCase().includes(search.toLowerCase())
+  );
+  const totalPages = Math.ceil(
+  filteredProducts.length / productsPerPage
+);
+
+const indexOfLastProduct = page * productsPerPage;
+const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+
+const currentProducts = filteredProducts.slice(
+  indexOfFirstProduct,
+  indexOfLastProduct
+);
   return (
     <Box sx={{ p: 4 }}>
-      <Typography variant="h4" fontWeight="bold" mb={4}>
-        Manage Products
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+          flexWrap: "wrap",
+          gap: 2,
+        }}
+      >
+        <Typography variant="h4" fontWeight="bold">
+          Manage Products
+        </Typography>
+
+        <TextField
+          size="small"
+          placeholder="Search products..."
+          value={search}
+          onChange={(e) => { setSearch(e.target.value);
+            setPage(1);
+          }}
+          sx={{ width: 300 }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
 
       <Button
         variant="contained"
@@ -110,7 +160,6 @@ async function deleteProduct() {
       >
         Add Product
       </Button>
-
       <Paper>
         <Table>
           <TableHead>
@@ -124,20 +173,17 @@ async function deleteProduct() {
               <TableCell align="center"><b>Action</b></TableCell>
             </TableRow>
           </TableHead>
-
           <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>{product.id}</TableCell>
-                <TableCell>
+            {filteredProducts.length > 0 ? (
+              currentProducts.map((product) => (
+                <TableRow key={product.id}>
+                  <TableCell>{product.id}</TableCell>
+
+                  <TableCell>
                     <Box
                       component="img"
                       src={product.image}
                       alt={product.name}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = noImage;
-                      }}
                       sx={{
                         width: 60,
                         height: 60,
@@ -147,40 +193,64 @@ async function deleteProduct() {
                       }}
                     />
                   </TableCell>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>{product.category}</TableCell>
-                <TableCell>₹ {product.price}</TableCell>
-                <TableCell>{product.stock}</TableCell>
 
-                <TableCell align="center">
-                  <Button
-                    component={Link}
-                    to={`/admin/edit-product/${product.id}`}
-                    variant="outlined"
-                    size="small"
-                    sx={{ mr: 1 }}
+                  <TableCell>{product.name}</TableCell>
+                  <TableCell>{product.category}</TableCell>
+                  <TableCell>₹ {product.price}</TableCell>
+                  <TableCell>{product.stock}</TableCell>
+
+                  <TableCell align="center">
+                    <Button
+                      component={Link}
+                      to={`/admin/edit-product/${product.id}`}
+                      variant="outlined"
+                      size="small"
+                      sx={{ mr: 1 }}
                     >
-                    Edit
+                      Edit
                     </Button>
 
-                  <Button
-                    variant="contained"
-                    color="error"
-                    size="small"
-                    onClick={() => {
-                      setSelectedProduct(product);
-                      setOpenDialog(true);
-                    }}
+                    <Button
+                      variant="contained"
+                      color="error"
+                      size="small"
+                      onClick={() => {
+                        setSelectedProduct(product);
+                        setOpenDialog(true);
+                      }}
                     >
-                    Delete
+                      Delete
                     </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={7} align="center">
+                  <Typography color="text.secondary" py={2}>
+                    No products found.
+                  </Typography>
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
 
         </Table>
       </Paper>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mt: 3,
+        }}
+      >
+        <Pagination
+          count={totalPages}
+          page={page}
+          color="primary"
+          onChange={(event, value) => setPage(value)}
+        />
+      </Box>
       <Dialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}

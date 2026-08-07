@@ -270,8 +270,9 @@ function Products() {
                       component="img"
                       height="240"
                       image={
-                        product.image ||
-                        "https://placehold.co/600x400?text=No+Image"
+                        product.image
+                          ? `http://127.0.0.1:8000/${product.image}`
+                          : "https://placehold.co/600x400?text=No+Image"
                       }
                       alt={product.name}
                       sx={{
