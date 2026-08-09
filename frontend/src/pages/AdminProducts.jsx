@@ -180,20 +180,25 @@ const currentProducts = filteredProducts.slice(
                   <TableCell>{product.id}</TableCell>
 
                   <TableCell>
-                    <Box
-                      component="img"
-                      src={product.image}
-                      alt={product.name}
-                      sx={{
-                        width: 60,
-                        height: 60,
-                        objectFit: "cover",
-                        borderRadius: 2,
-                        border: "1px solid #ddd",
-                      }}
-                    />
-                  </TableCell>
-
+                  <img
+                    src={
+                      product.image
+                        ? `http://127.0.0.1:8000/${product.image}`
+                        : "https://placehold.co/80x80?text=No+Image"
+                    }
+                    alt={product.name}
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        "https://placehold.co/80x80?text=No+Image";
+                    }}
+                    style={{
+                      width: "80px",
+                      height: "60px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </TableCell>
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.category}</TableCell>
                   <TableCell>₹ {product.price}</TableCell>
