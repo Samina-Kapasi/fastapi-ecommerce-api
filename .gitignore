@@ -1,4 +1,20 @@
+# Python
 venv/
 __pycache__/
-*.pyc 
+*.pyc
+
+# Environment variables
 .env
+
+# React / Node
+node_modules/
+frontend/node_modules/
+
+# Build files
+frontend/dist/
+
+# IDE
+.vscode/
+
+# Uploaded product images
+uploads/

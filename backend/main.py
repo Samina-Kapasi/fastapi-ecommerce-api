@@ -104,22 +104,51 @@ def delete_product( product_id:int ,db:session=Depends(get_db)):
     return JSONResponse(status_code=200, content={"message":"Product deleted successfully"})
 
 @app.put("/product/{product_id}")
-def update_product( product_id : int, product:Update_ProductCreate, db:session=Depends(get_db)):
+async def update_product(
+    product_id: int,
 
-    prod=db.query(Product).filter(product_id==Product.id).first()
+    name: str = Form(...),
+    description: str = Form(...),
+    price: float = Form(...),
+    stock: int = Form(...),
+    category: str = Form(...),
+
+    image: UploadFile = File(None),
+
+    db: session = Depends(get_db)
+):
+
+    prod = db.query(Product).filter(Product.id == product_id).first()
 
     if not prod:
-        raise HTTPException(status_code=404, detail="Product not found")
-    
-    update_prod= product.model_dump(exclude_unset=True)
+        raise HTTPException(
+            status_code=404,
+            detail="Product not found"
+        )
 
-    for key, value in update_prod.items():
-        setattr(prod,key,value)
+    prod.name = name
+    prod.description = description
+    prod.price = price
+    prod.stock = stock
+    prod.category = category
+
+    if image:
+
+        file_path = f"uploads/{image.filename}"
+
+        with open(file_path, "wb") as buffer:
+            buffer.write(await image.read())
+
+        prod.image = file_path
 
     db.commit()
     db.refresh(prod)
 
-    return JSONResponse(status_code=200, content={"message":"Product updated successfully"})
+    return JSONResponse(
+        status_code=200,
+        content={"message": "Product updated successfully"}
+    )
+
 
 @app.get("/search/{product_name}")
 def search(product_name:str, db:session=Depends(get_db)):

@@ -14,6 +14,11 @@ import {
   CircularProgress,
   Alert,
   Snackbar,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 
 import MuiAlert from "@mui/material/Alert";
@@ -44,11 +49,20 @@ function Cart() {
 
   const [severity, setSeverity] = useState("success");
 
+  const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
+
+  const [selectedProductId, setSelectedProductId] = useState(null);
+
   useEffect(() => {
 
     loadCart();
 
   }, []);
+
+  function handleRemoveClick(cartId) {
+  setSelectedProductId(cartId);
+  setRemoveDialogOpen(true);
+}
 
   async function loadCart() {
 
@@ -109,37 +123,38 @@ function Cart() {
 
   }
 
-  async function removeItem(cartId) {
+  async function removeItem() {
+  if (!selectedProductId) return;
 
-    if (!window.confirm("Remove this product from cart?")) {
+  try {
+    await removeFromCart(selectedProductId);
 
-      return;
+    setRemoveDialogOpen(false);
+    setSelectedProductId(null);
 
-    }
+    await loadCart();
 
-    try {
+    setMessage("Product removed from cart.");
+    setSeverity("success");
+    setOpen(true);
 
-      await api.delete(`/cart/${cartId}`);
+  } catch (err) {
+    console.error("Failed to remove item:", err);
 
-      setMessage("Product removed successfully.");
+    setMessage(
+      err.response?.data?.detail?.[0]?.msg ||
+      err.response?.data?.detail ||
+      "Unable to remove product."
+    );
 
-      setSeverity("success");
-
-      setOpen(true);
-
-      loadCart();
-
-    } catch {
-
-      setMessage("Unable to remove product.");
-
-      setSeverity("error");
-
-      setOpen(true);
-
-    }
-
+    setSeverity("error");
+    setOpen(true);
   }
+}
+
+async function removeFromCart(cartId) {
+  return await api.delete(`/cart/${cartId}`);
+}
 
   async function placeOrder() {
 
@@ -319,8 +334,9 @@ function Cart() {
                   <CardMedia
                     component="img"
                     image={
-                      item.image ||
-                      "https://placehold.co/500x350?text=No+Image"
+                      item.image
+                        ? `http://127.0.0.1:8000/${item.image}`
+                        : "https://placehold.co/500x350?text=No+Image"
                     }
                     height="260"
                     sx={{
@@ -418,9 +434,8 @@ function Cart() {
                       color="error"
                       startIcon={<Delete />}
                       sx={{ mt: 2 }}
-                      onClick={() =>
-                        removeItem(item.cart_id)
-                      }
+                      onClick={() => handleRemoveClick(item.cart_id)}
+                        color="error"
                     >
                       Remove Product
                     </Button>
@@ -461,9 +476,11 @@ function Cart() {
             <Divider sx={{ my: 3 }} />
 
             <Box
-              display="flex"
-              justifyContent="space-between"
-              mb={2}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mb: 2,
+              }}
             >
               <Typography>
                 Items Total
@@ -476,9 +493,11 @@ function Cart() {
             </Box>
 
             <Box
-              display="flex"
-              justifyContent="space-between"
-              mb={2}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mb: 2,
+              }}
             >
               <Typography>
                 GST (18%)
@@ -491,9 +510,11 @@ function Cart() {
             </Box>
 
             <Box
-              display="flex"
-              justifyContent="space-between"
-              mb={2}
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mb: 2,
+              }}
             >
               <Typography>
                 Delivery
@@ -511,8 +532,10 @@ function Cart() {
             <Divider sx={{ my: 3 }} />
 
             <Box
-              display="flex"
-              justifyContent="space-between"
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
             >
               <Typography
                 variant="h6"
@@ -570,6 +593,42 @@ function Cart() {
           {message}
         </MuiAlert>
       </Snackbar>
+
+      <Dialog
+  open={removeDialogOpen}
+  onClose={() => setRemoveDialogOpen(false)}
+  maxWidth="xs"
+  fullWidth
+>
+  <DialogTitle>
+    Remove Product?
+  </DialogTitle>
+
+  <DialogContent>
+    <DialogContentText>
+      Are you sure you want to remove this product from your cart?
+    </DialogContentText>
+  </DialogContent>
+
+  <DialogActions sx={{ px: 3, pb: 2 }}>
+    <Button
+      onClick={() => {
+        setRemoveDialogOpen(false);
+        setSelectedProductId(null);
+      }}
+    >
+      Cancel
+    </Button>
+
+    <Button
+      onClick={removeItem}
+      variant="contained"
+      color="error"
+    >
+      Remove
+    </Button>
+  </DialogActions>
+</Dialog>
 
     </Box>
 
