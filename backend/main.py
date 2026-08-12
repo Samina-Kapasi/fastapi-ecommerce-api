@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from fastapi import FastAPI, Depends, HTTPException,  UploadFile, File, Form
 from database import Base, engine, get_db
 from models import Product, Cart, User, Order, Order_items
@@ -9,22 +11,29 @@ from auth import create_access_token, get_current_user
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+
 import os
 
 app=FastAPI()
 
-os.makedirs("uploads", exist_ok=True)
+BASE_DIR = Path(r"F:\python program\ecommerce_api")
+
+UPLOAD_DIR = BASE_DIR / "uploads"
+
+print("UPLOAD DIRECTORY:", UPLOAD_DIR)
+print("UPLOAD DIRECTORY EXISTS:", UPLOAD_DIR.exists())
+print("FILES:", list(UPLOAD_DIR.iterdir()) if UPLOAD_DIR.exists() else "Folder not found")
 
 app.mount(
     "/uploads",
-    StaticFiles(directory="uploads"),
-    name="uploads",
+    StaticFiles(directory=str(UPLOAD_DIR)),
+    name="uploads"
 )
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
+        "http://127.0.0.1:5173",
     ],
     allow_credentials=True,
     allow_methods=["*"],

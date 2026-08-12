@@ -165,8 +165,9 @@ function Home() {
                   component="img"
                   height="220"
                   image={
-                    product.image ||
-                    noImage
+                    product.image
+                      ? `http://127.0.0.1:8000/uploads/${product.image.split("/").pop()}`
+                      : noImage
                   }
                   alt={product.name}
                 />
