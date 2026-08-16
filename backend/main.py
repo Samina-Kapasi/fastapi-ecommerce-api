@@ -16,7 +16,7 @@ import os
 
 app=FastAPI()
 
-BASE_DIR = Path(r"F:\python program\ecommerce_api")
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 UPLOAD_DIR = BASE_DIR / "uploads"
 
@@ -63,7 +63,10 @@ async def create_product(
                             db: session = Depends(get_db),
                         ):
 
-    file_path = f"uploads/{image.filename}"
+    file_path = UPLOAD_DIR / image.filename
+
+    with open(file_path, "wb") as buffer:
+        buffer.write(await image.read())
 
     with open(file_path, "wb") as buffer:
         buffer.write(await image.read())
