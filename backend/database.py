@@ -12,7 +12,10 @@ if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is not set")
 
 engine=create_engine(
-    DATABASE_URL
+    DATABASE_URL,
+    connect_args={
+        "ssl": {}
+    }
 )
 
 SessionLocal=sessionmaker(
