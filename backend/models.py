@@ -23,7 +23,7 @@ class Product(Base):
 
     category=Column(String(250))
 
-    image = Column(String, nullable=True)
+    image = Column(String(255), nullable=True)
 
     cart_items=relationship(
         "Cart",
