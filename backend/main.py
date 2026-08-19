@@ -20,6 +20,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 UPLOAD_DIR = BASE_DIR / "uploads"
 
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
 print("UPLOAD DIRECTORY:", UPLOAD_DIR)
 print("UPLOAD DIRECTORY EXISTS:", UPLOAD_DIR.exists())
 print("FILES:", list(UPLOAD_DIR.iterdir()) if UPLOAD_DIR.exists() else "Folder not found")
@@ -68,16 +70,13 @@ async def create_product(
     with open(file_path, "wb") as buffer:
         buffer.write(await image.read())
 
-    with open(file_path, "wb") as buffer:
-        buffer.write(await image.read())
-
     new_product = Product(
-    name=name,
-    description=description,
-    price=price,
-    stock=stock,
-    category=category,
-    image=file_path,
+        name=name,
+        description=description,
+        price=price,
+        stock=stock,
+        category=category,
+        image=image.filename,
     )
 
     db.add(new_product)
@@ -192,7 +191,7 @@ def filter_product(product_name:str = None ,product_category:str = None , min_pr
     #sorting
     if sort=="price_low":
         query=query.order_by(Product.price.asc())
-    elif sort=="price-high":
+    elif sort=="price_high":
         query=query.order_by(Product.price.desc())
 
     #pagination
