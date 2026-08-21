@@ -271,7 +271,7 @@ function Products() {
                       height="240"
                       image={
                         product.image
-                          ? `http://127.0.0.1:8000/${product.image}`
+                          ? `https://shopease-api-jzn6.onrender.com/uploads/${product.image}`
                           : "https://placehold.co/600x400?text=No+Image"
                       }
                       alt={product.name}

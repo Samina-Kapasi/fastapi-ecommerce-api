@@ -62,7 +62,7 @@ function AdminProducts() {
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
+      < Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
         <CircularProgress />
       </Box>
     );
@@ -183,7 +183,7 @@ const currentProducts = filteredProducts.slice(
                   <img
                     src={
                       product.image
-                        ? `http://127.0.0.1:8000/${product.image}`
+                        ? `https://shopease-api-jzn6.onrender.com/uploads/${product.image}`
                         : "https://placehold.co/80x80?text=No+Image"
                     }
                     alt={product.name}
