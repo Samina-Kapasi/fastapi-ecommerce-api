@@ -65,7 +65,8 @@ async def create_product(
                             db: session = Depends(get_db),
                         ):
 
-    file_path = UPLOAD_DIR / image.filename
+    filename = Path(image.filename).name
+    file_path = UPLOAD_DIR / filename
 
     with open(file_path, "wb") as buffer:
         buffer.write(await image.read())
@@ -76,7 +77,7 @@ async def create_product(
         price=price,
         stock=stock,
         category=category,
-        image=image.filename,
+        image=filename,
     )
 
     db.add(new_product)
@@ -145,12 +146,13 @@ async def update_product(
 
     if image:
 
-        file_path = f"uploads/{image.filename}"
+        filename = Path(image.filename).name
+        file_path = UPLOAD_DIR / filename
 
         with open(file_path, "wb") as buffer:
             buffer.write(await image.read())
 
-        prod.image = file_path
+        prod.image = filename
 
     db.commit()
     db.refresh(prod)
